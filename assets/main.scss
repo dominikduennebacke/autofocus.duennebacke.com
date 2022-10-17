@@ -68,15 +68,8 @@ pre.highlight {
     &:active,
     &:focus,
     &:hover {
-      background: rgba(0, 0, 0, 0.7);
+      background: #fdfdfd;
       opacity: 1;
     }
-  }
-
-  &:active .copy,
-  &:focus .copy,
-  &:hover .copy {
-    background: rgba(0, 0, 0, 0.7);
-    opacity: 1;
   }
 }
