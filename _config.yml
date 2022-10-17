@@ -1,0 +1,29 @@
+title: "autofocus"
+author: "Dominik Dünnebacke"
+description: "Tech blog focused on automating IT processes with PowerShell."
+
+email: "dominik@duennebacke.com"
+github_username: "dominikduennebacke"
+linkedin_username: "dominikduennebacke"
+
+disqus:
+  shortname: autofocus-duennebacke-com
+
+theme: "minima"
+
+show_excerpts: true
+permalink: pretty
+rss: rss
+    
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jemoji
+
+titles_from_headings:
+  strip_title: true
+  collections: true
+
+header_pages:
+  - about.md
+  - tags.md
