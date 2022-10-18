@@ -67,6 +67,7 @@ pre.highlight {
   // copy code to clipboard
   .copy {
     color: $brand-color;
+    background-color: $background-color;
     border: 0;
     position: absolute;
     right: 0.5rem;
