@@ -1,10 +1,10 @@
 ---
 ---
-@import "minima";
 
 /* Font */
-/*$base-font-family: 'JetBrains Mono', sans-serif !default;*/
-$base-font-family: 'Ubuntu Mono', monospace;
+$base-font-family: 'JetBrains Mono', sans-serif !default;
+
+@import "minima";
 
 /* H1 is biggest headline */
 .post-content {
