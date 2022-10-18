@@ -1,10 +1,6 @@
 ---
 ---
 
-/* Font */
-$base-font-family: 'JetBrains Mono', sans-serif !default;
-$text-color:       #5b5b5b !default;
-
 @import "minima";
 
 /* H1 is biggest headline */
@@ -70,12 +66,13 @@ pre.highlight {
 
   // copy code to clipboard
   .copy {
-    color: #4AF626;
+    color: $brand-color;
     border: 0;
     position: absolute;
-    right: 1.2rem;
-    top: 1.2rem;
+    right: 0.5rem;
+    top: 0.5rem;
     opacity: 0;
+    padding: 5px;
 
     &:active,
     &:focus,
