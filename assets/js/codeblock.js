@@ -14,7 +14,7 @@ codeBlocks.forEach(function (codeBlock) {
     window.navigator.clipboard.writeText(code);
     
     Button.innerText = 'Copied';
-    var fourSeconds = 4000;
+    var fourSeconds = 2000;
 
     setTimeout(function () {
        Button.innerText = 'Copy';
