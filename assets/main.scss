@@ -52,12 +52,12 @@
 }
 
 pre.highlight {
-  border-radius: 25px;
+  padding: 8px 8px;
+  position: relative;
 
   // override skeleton styles
   > code {
     border: 0;
-    border-radius: 25px;
     overflow-x: auto;
     padding-right: 0;
     padding-left: 0;
