@@ -67,7 +67,6 @@ pre.highlight {
   // copy code to clipboard
   .copy {
     color: $brand-color;
-    background-color: $background-color;
     border: 0;
     position: absolute;
     right: 0.5rem;
@@ -78,7 +77,7 @@ pre.highlight {
     &:active,
     &:focus,
     &:hover {
-      background: rgba(0, 0, 0, 0.7);
+      background: $background-color;
       opacity: 1;
     }
   }
@@ -86,7 +85,7 @@ pre.highlight {
   &:active .copy,
   &:focus .copy,
   &:hover .copy {
-    background: rgba(0, 0, 0, 0.7);
+    background:$background-color;
     opacity: 1;
   }
 } 
