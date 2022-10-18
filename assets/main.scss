@@ -56,12 +56,9 @@ $text-color:       #828282 !default;
 }
 
 pre.highlight {
-  padding: 8px 12px;
-  position: relative;
-
-  &:active,
-  &:focus,
-  &:hover {
+  &:active .copy,
+  &:focus .copy,
+  &:hover .copy {
     background: #fdfdfd;
     opacity: 1;
   }
@@ -73,6 +70,7 @@ pre.highlight {
     right: 1rem;
     top: 1rem;
     opacity: 0;
+    border: 0;
 
     &:active,
     &:focus,
