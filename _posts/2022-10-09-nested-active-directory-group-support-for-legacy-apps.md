@@ -17,11 +17,13 @@ Let's look at a typical access management approach. We have configured the resou
 This works great, provided that GrayLog supports nested group membership. But what if it doesn't?
 
 ## Solution
-Well, we use our handy script [Sync-NestedAdGroupMember](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember). First we create a pair of groups in Active Directory.
+We use our handy script [Sync-NestedAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember)!  
+
+First we create a pair of groups in Active Directory.
 * `app-graylog-access-NESTED`: Here we manage the users.
 * `app-graylog-access-UNNESTED`: This group is configured within GrayLog to allow base access.
 
-Then we nest our role groups into `app-graylog-access-NESTED`.
+Then we add our role groups as members to `app-graylog-access-NESTED`.
 ```
 ├── app-graylog-access-NESTED
 │   ├── role-department-devops
