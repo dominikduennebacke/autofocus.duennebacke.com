@@ -1,5 +1,6 @@
 ---
 tags: active-directory
+published: false
 ---
 
 One of my favorite features in Azure AD is the dynamic group features. You can simply add users to a group by defining a query based on a users attribute. Wouln't it be great to have the same feature in Active Directory? I got you covered.
