@@ -16,7 +16,7 @@ Let's look at a typical access management approach. We have configured the resou
 ```
 This works great, provided that GrayLog supports nested group membership. But what if it doesn't?
 
-## Solution
+## Workaround
 We use our handy script [Sync-NestedAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember)!  
 
 First we create a pair of groups in Active Directory.
