@@ -2,7 +2,7 @@
 tags: powershell active-directory groups
 ---
 
-Don't you hate it? You have spent countless hours on setting up a role-based access control model. You created role groups for your Active Directory users which you assigned to resource groups, but now this one application put's up a fight - it does not support nested group membership. No problem, you assign users directly to the resource group. However, next time Sam changes the department you need to manually remove him from that group. Ugh! Can't we automate that? Sure, PowerShell to the rescue.
+Don't you hate it? You have spent countless hours on setting up a role-based access model. You created role groups for your Active Directory users which you assigned to resource groups, but now this one application put's up a fight - it does not support nested group membership. No problem, you assign users directly to the resource group. However, next time Sam changes the department you need to manually remove him from that group. Ugh! Can't we automate that? Sure, PowerShell to the rescue.
 
 ## Problem
 Let's look at a typical access management approach. We have configured the resource group `app-graylog-access` in GrayLog to provide base access to the application. Nested within that resource group we added two role groups `role-department-devops` and `role-department-sysops` that contain our users. Now all those users can access GrayLog and the only thing we need to worry about is managing our role groups.
