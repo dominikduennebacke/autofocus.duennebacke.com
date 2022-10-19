@@ -17,7 +17,7 @@ Let's look at a typical access management approach. We have configured the resou
 This works great, provided that GrayLog supports nested group membership. But what if it doesn't?
 
 ## Solution
-Well, we use our handy script [Sync-NestedAdGroupMember](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember). First we create a group pair in Active Directory.
+Well, we use our handy script [Sync-NestedAdGroupMember](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember). First we create a pair of groups in Active Directory.
 * `app-graylog-access-NESTED`: Here we manage the users.
 * `app-graylog-access-UNNESTED`: This group is configured within GrayLog to allow base access.
 
@@ -65,16 +65,16 @@ Let's look at our group structure one more time:
 │   ├── tom.tonkins
 ```
 
-Et voilà, all users that are a (nested) member of the group `app-graylog-access-NESTED` are now direct member of the group `app-graylog-access-UNNESTED`. This works two ways: Missing members are added, and obsolete members are removed. So if Sam makes that department change, he will automatically be removed. Yay!
+Et voilà, all users that are a (nested) member of the group `app-graylog-access-NESTED` are now direct member of the group `app-graylog-access-UNNESTED` and can access GrayLog. This works two ways: Missing members are added, and obsolete members are removed. So if Sam makes that department change, he will automatically be removed. Yay!
 
 ## Scheduling
-So how does this help me? I would need to run this script every time something in my role groups changes. Not quite! Scheduling allows you to sit back and let automation do its job. Let the script run every 5-10 minutes. This ensures that changes made to the `NESTED` group are reflected in the `UNNESTED` group in a timely manner. I won't go into depth how to set up scheduling for now, but in short: Either utilize the task scheduler which is present on each Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD.
+So how does this help me? I would need to run this script every time something in my role groups changes. Not quite! Scheduling allows you to sit back and let automation do its job. Let the script run every 5-10 minutes. This ensures that changes made to the `NESTED` group are reflected in the `UNNESTED` group in a timely manner. I won't go into depth how to set up scheduling for now, but in short: Either utilize the task scheduler which is present on each Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
-One pair is great, but how about 10? No problem, the script theoretically allows an infinite number of pairs. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval you choose. I have run it in environments of roughly 1000 users and 6-7 pairs with a scheduling interval of 5 minutes, without issues.
+One group pair is great, but how about 10? No problem, the script theoretically allows an infinite number of pairs. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval you choose. I have run it in environments of roughly 1000 users and 6-7 pairs with a scheduling interval of 5 minutes, without issues.
 
 ## The suffixes
-The script dictates to use the suffixes `-NESTED` and `-UNNESTED` for your group pairs. Does this make you feel uncomfortable? All caps is not your cup of tea? I hear you, but please bear with me. In my experience it is very valuable to quickly identify groups which are managed by the script, whether that is in an application, in an OU or the AD user's "Member Of" tab. Maybe you even run monitoring on your AD users, to prevent direct group memberships. With the naming convention you can easily exclude `-UNNESTED` groups from that check.
+The script dictates to use the suffixes `-NESTED` and `-UNNESTED` for your group pairs. Does this make you feel uncomfortable? All caps is not your cup of tea? I hear you, but please bear with me. In my experience it is very valuable to quickly identify groups which are managed by the script, whether that is in an application, in an OU or the AD user's "Member Of" tab. Maybe you even run monitoring on your AD users, to report direct group memberships. With the naming convention you can easily exclude `-UNNESTED` groups from that check.
 
 ## Parameters
 Oh, so you're a pro user? Cool, here are some extra features the script offers.
