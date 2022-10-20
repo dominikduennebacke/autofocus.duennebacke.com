@@ -71,7 +71,7 @@ Let's look at our group structure one more time:
 │   ├── tom.tonkins
 ```
 
-Et voilà, all users that are a (nested) member of the group `app-graylog-access-NESTED` are now direct member of the group `app-graylog-access-UNNESTED` and can access GrayLog. Now let's look at Sam. The next day he changes to the sales department (who does that?!). On the next run the script automatically removes him from the `-UNNESTED` group. Yay!
+Et voilà, all users that are a (nested) member of the group `app-graylog-access-NESTED` are now direct member of the group `app-graylog-access-UNNESTED` and can access GrayLog. Now let's look at Sam. The next day he changes to the sales department (who does that?!). On the next run the script automatically removes him from the `UNNESTED` group. Yay!
 ```
 ├── app-graylog-access-NESTED
 │   ├── role-department-devops
@@ -87,7 +87,7 @@ Et voilà, all users that are a (nested) member of the group `app-graylog-access
 So how can you call that automation? I would need to run the script every time something in my role groups changes. Well, not quite! Scheduling allows you to sit back and relax. Let the script run every 5-10 minutes. This ensures that changes made in `NESTED` group are reflected in the `UNNESTED` group in a timely manner. I won't go into depth how to set up scheduling for now, but in short: Either utilize the task scheduler which is present on each Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
-One group pair is great, but how about ten? No problem, the script theoretically allows an infinite number of pairs. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. I have run it in environments of ~1000 users and 6-7 pairs with a scheduling interval of 5 minutes, without issues.
+One group pair is great, but how about ten? No problem, the script theoretically allows an infinite number of pairs. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 6-7 pairs with a scheduling interval of 5 minutes.
 
 ## Suffixes
 The script dictates to use the suffixes `-NESTED` and `-UNNESTED` for your group pairs. Does this make you feel uncomfortable? All caps is not your cup of tea? I hear you, but please bear with me. In my experience it is very valuable to quickly identify groups which are managed by the script. This could be in:
@@ -158,7 +158,7 @@ What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) tom.tonkin
 ```
 
 ### PassThru
-You have set up a scheduled task to run the script and demand output that you want to pipe to a log file? By adding the `PassThru` switch the script will return an output for all changes that were made.
+You have set up a scheduled task to run the script and demand output that you want to pipe to a log file? By adding the `PassThru` switch the script will return pipeable output for all changes that were made. If no changes were made, no output is generated.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -PassThru | Out-File -FilePath .\Log.txt
 ```
@@ -171,7 +171,7 @@ app-graylog-access-NESTED app-graylog-access-UNNESTED tom.tonkins Add
 ```
 
 ### NestedSuffix / UnnestedSuffix
-You tried, you really tried, but you cannot deal with the pre-defined suffixes `-NESTED` and `-UNNESTED` that determine group pairs? Alright alright, calm down. The script has two parameters hidden from IntelliSense which allow you to override the suffixes.
+You tried, you really tried, but you cannot deal with the pre-defined suffixes `-NESTED` and `-UNNESTED` that determine group pairs? Alright alright, calm down. The script has two parameters hidden from IntelliSense which allow you to override the suffixes. Make sure they are unique, so groups are not accidentally considered as pair by the script.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -NestedSuffix "-nest" -UnnestedSuffix "-unnest"
 ```
