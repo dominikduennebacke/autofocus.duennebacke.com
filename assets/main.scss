@@ -14,6 +14,13 @@
   }
 }
 
+/* Override block quote */
+blockquote {
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 14px;
+  background: #f9f9f9;
+
 /* Footer spacing is spread more evenly */
 .footer-col-1 {
   width: -webkit-calc(35% - (#{$spacing-unit} / 2));
