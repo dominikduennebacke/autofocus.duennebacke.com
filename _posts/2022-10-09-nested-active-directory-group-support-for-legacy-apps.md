@@ -19,9 +19,6 @@ This works great, provided that GrayLog supports nested group membership. But wh
 ## Workaround
 We use our handy script [Sync-NestedAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember)! Let's take a look what it does.
 
-> **.SYNOPSIS**  
-> Fetches members of AD groups with name suffix -NESTED recursively and syncs them to their -UNNESTED counterpart.
-> 
 > **.DESCRIPTION**  
 > The Sync-NestedAdGroupMember.ps1 script syncs members between pairs of groups.
 > A pair consists of two groups with an identical name followed by the suffix -NESTED for one group and -UNNESTED for the other,
