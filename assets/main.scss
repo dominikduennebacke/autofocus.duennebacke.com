@@ -16,10 +16,11 @@
 
 /* Override block quote */
 blockquote {
-  border-left: 4px solid #e8e8e8;
-  padding-left: 15px;
-  font-size: 14px;
+  border-left: 4px solid #eeeeff;
+  font-size: $base-font-size;
   background: #f9f9f9;
+  letter-spacing: 0px;
+  font-style: normal;
 }
 
 /* Footer spacing is spread more evenly */
