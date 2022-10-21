@@ -19,12 +19,19 @@ This works great, provided that GrayLog supports nested group membership. But wh
 ## Workaround
 We use our handy script [Sync-NestedAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember)! Let's take a look what it does.
 
-> #### .SYNOPSIS
-> Fetches members of AD groups with name suffix -NESTED recursively and syncs them to their -UNNESTED counterpart.
-> #### .DESCRIPTION
-> The Sync-NestedAdGroupMember.ps1 script syncs members between pairs of groups. A pair consists of two groups with an identical name followed by the suffix `-NESTED` for one group and `-UNNESTED` for the other, where the nested group is the source of truth for the members. You can theoretically create an infinite amount of those pairs in your Active Directory.
-> 
-> During execution the script fetches all AD groups with suffix `-NESTED`, loops thru them and looks for their `-UNNESTED` counterpart. Then all members of the `-NESTED` group are fetched > recursively and synced to the `-UNNESTED` group. This means missing members are added and obsolete members are removed. Manual changes to the `-UNNESTED` group are overwritten.
+.SYNOPSIS
+    Fetches members of AD groups with name suffix -NESTED recursively and syncs them to their -UNNESTED counterpart.
+
+    .DESCRIPTION
+    The Sync-NestedAdGroupMember.ps1 script syncs members between pairs of groups.
+    A pair consists of two groups with an identical name followed by the suffix -NESTED for one group and -UNNESTED for the other,
+    where the nested group is the source of truth for the members. You can theoretically create an infinite amount of those pairs in your Active Directory.
+
+    During execution the script fetches all AD groups with suffix -NESTED, loops thru them and looks for their -UNNESTED counterpart.
+    Then all members of the -NESTED group are fetched recursively and synced to the -UNNESTED group.
+    This means missing members are added and obsolete members are removed.
+    Manual changes to the -UNNESTED group are overwritten.
+
 
 Great, sounds like that's exactly what we need!  
 
