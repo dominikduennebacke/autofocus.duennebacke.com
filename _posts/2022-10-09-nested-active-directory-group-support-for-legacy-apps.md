@@ -194,4 +194,4 @@ So there you have it, a simple PowerShell script that can save you lots of time 
 ## Disclaimer
 GrayLog supports nested group membership since 2020 and more and more applications do so too. Additionally many of them offer modern authentication procotols such as OAUTH or SAML that you can utilize with your identity provider (e.g. Azure AD). So keep an eye - you might not even need this script.
 
-> **Note:** As with any script from the internet, use them at your own risk and inspect the source code before running them.
+> :warning: As with any script from the internet, use them at your own risk and inspect the source code before running them.
