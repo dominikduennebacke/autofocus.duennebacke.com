@@ -18,12 +18,17 @@ This works great, provided that GrayLog supports nested group membership. But wh
 
 ## Workaround
 We use our handy script [Sync-NestedAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember)! Let's take a look what it does.
-```
-.SYNOPSIS
-Fetches members of AD groups with name suffix -NESTED recursively and syncs them to their -UNNESTED counterpart.
-```
 
-Great! Sounds like that's exactly what we need. Let's try it out. So, first we create a pair of AD groups. Make sure the names before the suffixes are identical.
+> #### .SYNOPSIS
+> Fetches members of AD groups with name suffix -NESTED recursively and syncs them to their -UNNESTED counterpart.
+> #### .DESCRIPTION
+> The Sync-NestedAdGroupMember.ps1 script syncs members between pairs of groups. A pair consists of two groups with an identical name followed by the suffix `-NESTED` for one group and `-UNNESTED` for the other, where the nested group is the source of truth for the members. You can theoretically create an infinite amount of those pairs in your Active Directory.
+> 
+> During execution the script fetches all AD groups with suffix `-NESTED`, loops thru them and looks for their `-UNNESTED` counterpart. Then all members of the `-NESTED` group are fetched > recursively and synced to the `-UNNESTED` group. This means missing members are added and obsolete members are removed. Manual changes to the `-UNNESTED` group are overwritten.
+
+Great, sounds like that's exactly what we need!  
+
+Let's try it out. So, first we create a pair of AD groups. Make sure the names before the suffixes are identical.
 * `app-graylog-access-NESTED`: This is where we manage our users.
 * `app-graylog-access-UNNESTED`: This group is configured within GrayLog to allow base access.
 
@@ -71,7 +76,7 @@ Let's look at our group structure one more time:
 │   ├── tom.tonkins
 ```
 
-Et voilà, all users that are a (nested) member of the group `app-graylog-access-NESTED` are now direct member of the group `app-graylog-access-UNNESTED` and can access GrayLog. Now let's look at Sam. The next day he changes to the sales department (who does that?!). On the next run the script automatically removes him from the `UNNESTED` group. Yay!
+Et voilà, all users that are a (nested) member of the group `app-graylog-access-NESTED` are now direct member of the group `app-graylog-access-UNNESTED` and can access GrayLog. Now let's look at Sam. The next day he changes to the sales department (who does that?). On the next run the script automatically removes him from the `UNNESTED` group. Yay!
 ```
 ├── app-graylog-access-NESTED
 │   ├── role-department-devops
@@ -92,11 +97,11 @@ One group pair is great, but how about ten? No problem, the script theoretically
 ## Suffixes
 The script dictates to use the suffixes `-NESTED` and `-UNNESTED` for your group pairs. Does this make you feel uncomfortable? All caps is not your cup of tea? I hear you, but please bear with me. In my experience it is very valuable to quickly identify groups which are managed by the script. This could be in:
 * An application
-* AD Users and Computers (ADUC) Snap-in
+* AD Users and Computers OU view
 * AD role group's 'Member Of' tab
 * AD user's 'Member Of' tab
 
-Maybe you even run monitoring on your AD users, to report (and remove) direct group memberships. With the naming convention you can easily exclude `-UNNESTED` groups from that check. Also the suffixes need to be unique so the script does not accidentally consider other groups as pairs. You are still not convinced and insist on other suffixes? I got you, take a look at the parameter section.
+Maybe you even run monitoring on your AD users, to report (and remove) direct group memberships. With the naming convention you can easily exclude `UNNESTED` groups from that check. Also the suffixes need to be unique so the script does not accidentally consider other groups as pairs. You are still not convinced and insist on other suffixes? I got you, take a look at the next section.
 
 ## Parameters
 Oh, so you're a pro user? Cool, here are some extra features the script offers.
@@ -182,5 +187,4 @@ So there you have it, a simple PowerShell script that can save you lots of time 
 ## Disclaimer
 GrayLog supports nested group membership since 2020 and more and more applications do so too. Additionally many of them offer modern authentication procotols such as OAUTH or SAML that you can utilize with your identity provider (e.g. Azure AD). So keep an eye - you might not even need this script.
 
-> **Note:**
-> As with any script you get from the internet, use them at your own risk.
+> **Note:** As with any script from the internet, use them at your own risk and inspect the source code before running them.
