@@ -45,6 +45,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/dominikduennebacke/Syn
 And run it. Make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember#REQUIREMENTS) when doing so.
 > :warning: **Warning**  
 > As with any script from the internet, use them at your own risk and inspect the source code before running them.
+
 ```powershell
 ./Sync-NestedAdGroupMember.ps1 -VERBOSE
 ```
