@@ -21,6 +21,8 @@ blockquote {
   background: #f9f9f9;
   letter-spacing: 0px;
   font-style: normal;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 /* Footer spacing is spread more evenly */
@@ -60,8 +62,12 @@ blockquote {
   }
 }
 
+.highlight {
+  border-radius: 10px;
+}
+
 pre.highlight {
-  padding: 8px 8px;
+  padding: 10px;
   position: relative;
 
   // override skeleton styles
