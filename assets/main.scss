@@ -1,6 +1,9 @@
 ---
 ---
 
+$background-color: #ffffff !default;
+$highlight-background-color: #eeeeff !default;
+
 @import "minima";
 
 /* H1 is biggest headline */
@@ -16,7 +19,7 @@
 
 /* Override block quote */
 blockquote {
-  border-left: 4px solid #eeeeff;
+  border-left: 4px solid $highlight-background-color;
   font-size: $base-font-size;
   background: #f9f9f9;
   letter-spacing: 0px;
@@ -62,8 +65,17 @@ blockquote {
   }
 }
 
+
+.highlighter-rouge .highlight {
+  background: $highlight-background-color;
+}
+
 .highlight {
   border-radius: 10px;
+}
+
+pre, code {
+  background-color: $highlight-background-color;
 }
 
 pre.highlight {
