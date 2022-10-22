@@ -19,20 +19,11 @@ This works great, provided that GrayLog supports nested group membership. But wh
 ## Workaround
 We use our handy script [Sync-NestedAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember)! Let's take a look what it does.
 
-> **.DESCRIPTION**  
-> The Sync-NestedAdGroupMember.ps1 script syncs members between pairs of groups.
-> A pair consists of two groups with an identical name followed by the suffix -NESTED for one group and -UNNESTED for the other,
-> where the nested group is the source of truth for the members. You can theoretically create an infinite amount of those pairs in your Active Directory.
-> 
-> During execution the script fetches all AD groups with suffix -NESTED, loops thru them and looks for their -UNNESTED counterpart.
-> Then all members of the -NESTED group are fetched recursively and synced to the -UNNESTED group.
-> This means missing members are added and obsolete members are removed.
-> Manual changes to the -UNNESTED group are overwritten.
+> **.SYNOPSIS**  
+> Fetches members of AD groups with name suffix -NESTED recursively and syncs them to their -UNNESTED counterpart.
 
 
-Great, sounds like that's exactly what we need. So let's try it out!  
-
-First we create a pair of AD groups. Make sure the name before the suffixes is identical.
+Great, sounds like that's what we need. So let's try it out! First we create a pair of AD groups. Make sure the name before the suffixes is identical.
 * `app-graylog-access-NESTED`: This is where we manage our users.
 * `app-graylog-access-UNNESTED`: This group is configured within GrayLog to allow base access.
 
@@ -52,6 +43,8 @@ Now we download the script.
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/dominikduennebacke/Sync-NestedAdGroupMember/main/Sync-NestedAdGroupMember.ps1" -OutFile "Sync-NestedAdGroupMember.ps1"
 ```
 And run it. Make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember#REQUIREMENTS) when doing so.
+> :warning: **Warning**  
+> As with any script from the internet, use them at your own risk and inspect the source code before running them.
 ```powershell
 ./Sync-NestedAdGroupMember.ps1 -VERBOSE
 ```
@@ -190,5 +183,3 @@ So there you have it, a simple PowerShell script that can save you lots of time 
 
 ## Disclaimer
 GrayLog supports nested group membership since 2020 and more and more applications do so too. Additionally many of them offer modern authentication procotols such as OAUTH or SAML that you can utilize with your identity provider (e.g. Azure AD). So keep an eye - you might not even need this script.
-
-> :warning: As with any script from the internet, use them at your own risk and inspect the source code before running them.
