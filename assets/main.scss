@@ -18,16 +18,15 @@ $text-color: rgb(96, 117, 126) !default;
       @include relative-font-size(2.25);
     }
   }
+
+  h1 h2 h3 h4 h5 h6 {
+    color: black;
+  }
 }
 
 .post-title {
   color: black;
 }
-
-.post-content h1 h2 h3 h4 h5 h6 {
-  color: black;
-}
-
 
 /* Override block quote */
 blockquote {
