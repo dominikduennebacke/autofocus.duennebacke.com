@@ -46,7 +46,6 @@ blockquote {
 pre, code {
   background: $highlight-background-color;
   border: 0;
-  color: $code-color;
 }
 
 .highlighter-rouge .highlight {
@@ -55,6 +54,7 @@ pre, code {
 
 .highlight {
   border-radius: 10px;
+  color: $code-color;
 }
 
 pre.highlight {
