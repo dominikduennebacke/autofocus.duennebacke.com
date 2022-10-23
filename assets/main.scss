@@ -4,6 +4,8 @@
 $dummy: "dummy";
 $background-color: #f9fafe !default;
 $highlight-background-color: #e3e8f4 !default;
+$code-background-color: #081b4b !default;
+
 $base-font-family: 'Source Sans Pro', sans-serif;
 $base-font-size:   18px !default;
 $brand-color: #1c4ed8 !default;
@@ -53,12 +55,12 @@ blockquote {
 }
 
 pre, code {
-  background: $highlight-background-color;
+  background: $code-background-color;
   border: 0;
 }
 
 .highlighter-rouge .highlight {
-  background: $highlight-background-color;
+  background: $code-background-color;
 }
 
 .highlight {
