@@ -13,7 +13,7 @@ $text-color: #4d5b7c !default;
 $code-color: white !default;
 $base-line-height: 1.75 !default;
 
-@import "minima";
+//@import "minima";
 
 body {
   -webkit-font-smoothing: antialiased;
