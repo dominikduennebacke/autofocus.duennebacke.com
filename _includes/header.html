@@ -4,7 +4,7 @@
       {%- assign default_paths = site.pages | map: "path" -%}
       {%- assign page_paths = site.header_pages | default: default_paths -%}
 
-      <a class="site-title" href="{{ "/" | relative_url }}"><img alt="logo" src="/android-chrome-192x192.png" width="75" height="75" style="padding-right: 5px;"/></a>
+      <a class="site-title" href="{{ "/" | relative_url }}"><img alt="logo" src="/android-chrome-192x192.png" width="50" height="50" style="padding-right: 5px;"/></a>
       <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
   
       {%- if page_paths -%}
