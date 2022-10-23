@@ -21,8 +21,7 @@ layout: default
           </a>
         </h3>
         {%- if site.show_excerpts -%}
-          <p>
-            {{ post.excerpt | remove: "<p>" | remove: "</p>" }}
+            {{ post.excerpt }}
             <a href="{{ post.url | relative_url }}">Read more ></a>
           </p>
         {%- endif -%}
