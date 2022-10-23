@@ -20,6 +20,10 @@ $text-color: rgb(96, 117, 126) !default;
   }
 }
 
+.post-title {
+  color: black;
+}
+
 /* Override block quote */
 blockquote {
   border-left: 4px solid $highlight-background-color;
