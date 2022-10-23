@@ -3,7 +3,7 @@
 
 $dummy: "dummy";
 $background-color: #ffffff !default;
-$highlight-background-color: rgb(249, 249, 249) !default;
+$highlight-background-color: #f6f8fa !default;
 $base-font-family: 'Source Sans Pro', sans-serif;
 $text-color: rgb(96, 117, 126) !default;
 
@@ -30,7 +30,7 @@ $text-color: rgb(96, 117, 126) !default;
 
 /* Override block quote */
 blockquote {
-  border-left: 4px solid $highlight-background-color;
+  border-left: 4px solid #d0d7de;
   font-size: $base-font-size;
   background: #f9f9f9;
   letter-spacing: 0px;
