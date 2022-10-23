@@ -24,6 +24,11 @@ $text-color: rgb(96, 117, 126) !default;
   color: black;
 }
 
+.post-content h1 h2 h3 h4 h5 h6 {
+  color: black;
+}
+
+
 /* Override block quote */
 blockquote {
   border-left: 4px solid $highlight-background-color;
