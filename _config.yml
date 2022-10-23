@@ -11,19 +11,17 @@ disqus:
 
 #theme: "minima"
 
-plugins:
-  - jekyll-remote-theme
-
-remote_theme: jekyll/minima
-
 show_excerpts: true
 permalink: pretty
 rss: rss
 
 plugins:
+  - jekyll-remote-theme
   - jekyll-feed
   - jekyll-sitemap
   - jemoji
+
+remote_theme: jekyll/minima
 
 titles_from_headings:
   strip_title: true
