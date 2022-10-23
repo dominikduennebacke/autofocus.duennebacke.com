@@ -49,6 +49,10 @@ blockquote {
   padding: 10px;
 }
 
+.highlight {
+  border-radius: 10px;
+}
+
 /* Footer spacing is spread more evenly */
 .footer-col-1 {
   width: -webkit-calc(35% - (#{$spacing-unit} / 2));
