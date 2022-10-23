@@ -56,6 +56,8 @@ pre, code {
 }
 
 pre.highlight {
+  padding: 10px;
+  position: relative;
 
   // override skeleton styles
   > code {
@@ -73,7 +75,7 @@ pre.highlight {
     right: 0.5rem;
     top: 0.5rem;
     opacity: 0;
-    font-size: $base-font-size;
+    padding: 5px;
 
     &:active,
     &:focus,
@@ -89,7 +91,7 @@ pre.highlight {
     background:$background-color;
     opacity: 1;
   }
-} 
+}  
 
 
 // Footer spacing is spread more evenly
