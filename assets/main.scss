@@ -9,6 +9,11 @@ $text-color: rgb(96, 117, 126) !default;
 
 @import "minima";
 
+/* Bigger header */
+element.style {
+  padding: 20px;
+}
+
 /* H1 is biggest headline */
 .post-content {
   h1 {
