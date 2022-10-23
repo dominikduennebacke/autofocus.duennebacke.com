@@ -9,7 +9,12 @@ linkedin_username: "dominikduennebacke"
 disqus:
   shortname: autofocus-duennebacke-com
 
-theme: "minima"
+#theme: "minima"
+
+plugins:
+  - jekyll-remote-theme
+
+remote_theme: jekyll/minima
 
 show_excerpts: true
 permalink: pretty
