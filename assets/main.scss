@@ -63,7 +63,6 @@ pre.highlight {
     overflow-x: auto;
     padding-right: 0;
     padding-left: 0;
-    color: $brand-color; 
   }
 
   // copy code to clipboard
@@ -81,7 +80,6 @@ pre.highlight {
     &:hover {
       background: $background-color;
       opacity: 1;
-      padding: 5px 20px;
     }
   }
 
@@ -90,7 +88,6 @@ pre.highlight {
   &:hover .copy {
     background:$background-color;
     opacity: 1;
-    padding: 5px 20px;
   }
 } 
 
