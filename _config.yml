@@ -23,6 +23,9 @@ plugins:
 
 remote_theme: jekyll/minima
 
+minima:
+  skin: solarized
+
 titles_from_headings:
   strip_title: true
   collections: true
