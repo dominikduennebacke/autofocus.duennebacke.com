@@ -15,6 +15,10 @@ $text-color: rgb(96, 117, 126) !default;
   padding: 20px;
 }
 
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
 /* H1 is biggest headline */
 .post-content {
   h1 {
