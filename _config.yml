@@ -14,7 +14,7 @@ theme: "minima"
 show_excerpts: true
 permalink: pretty
 rss: rss
-    
+
 plugins:
   - jekyll-feed
   - jekyll-sitemap
@@ -27,3 +27,7 @@ titles_from_headings:
 header_pages:
   - about.md
   - tags.md
+
+after_footer_scripts:
+  - https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js
+  - assets/js/clipboardrouge.js
