@@ -19,6 +19,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+pre, code {
+  background: $highlight-background-color;
+}
+
+.highlighter-rouge .highlight {
+  background: $highlight-background-color;
+}
+
 /* H1 is biggest headline */
 .post-content {
   h1 {
