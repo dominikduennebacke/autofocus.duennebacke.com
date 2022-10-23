@@ -12,6 +12,8 @@ $text-color: rgb(96, 117, 126) !default;
 
 /* Bigger header */
 .site-header {
+  border-top: 0px
+  border-bottom: 0px;
   padding: 20px;
 }
 
