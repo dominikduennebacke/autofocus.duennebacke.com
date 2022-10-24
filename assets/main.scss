@@ -10,6 +10,7 @@ $base-font-family: 'Source Sans Pro', sans-serif;
 $base-font-size:   18px !default;
 $brand-color: #0169ff !default;
 $text-color: #4d5b7c !default;
+$title-color: #031b4e !default;
 $code-color: white !default;
 $base-line-height: 1.75 !default;
 
@@ -29,8 +30,13 @@ body {
   font-weight: bold;
 }
 
+site-nav .page-link {
+  color: $title-color;
+  line-height: 1.75;
+}
+
 .post-title {
-  color: #031b4e;
+  color: $title-color;
 }
 
 .post-content {
