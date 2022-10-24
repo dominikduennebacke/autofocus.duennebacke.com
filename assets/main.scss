@@ -25,6 +25,10 @@ body {
   color: black;
 }
 
+.site-title, .site-title:visited {
+  color: $brand-color;
+}
+
 .post-title {
   color: black;
 }
