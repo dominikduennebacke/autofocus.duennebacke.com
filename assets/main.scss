@@ -40,7 +40,6 @@ body {
   letter-spacing: 0px;
   font-style: normal;
   border-radius: 10px;
-  padding: 5px;
   color: $brand-color;
   font-family: $base-font-family;
   &:hover {
@@ -85,6 +84,7 @@ pre.highlight {
     padding-right: 0;
     padding-left: 0;
     background: $code-background-color;
+    font-size: 16px;
   }
 
   // copy code to clipboard
