@@ -27,22 +27,22 @@ tom.tokins@contoso.com      Software Developer
 ```
 
 
-Look's about right. We can now go ahead and assign Azure AD resources to those groups, whether that's an app, a license or memberships or ownership for other groups. This comes in very handy if we synchronize our employee data from an HR system. The only thing you need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :smirk:  
+Look's about right. We can now go ahead and assign Azure AD resources to those groups, whether that's an app, a license or memberships or ownership for other groups. This comes in very handy if we synchronize our employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush:  
 
-But what if some or even all of your resources are managed in Active Directory? Read on.
+But what if some or even all of your resources are managed in Active Directory? Keep on reading.
 
 ## Active Directory
 
-The script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember) basically mimics the functionality of Azure AD dynamic groups.  
+I have built the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember) which basically mimics the functionality of Azure AD dynamic groups in Active Directory.  
 
 > **.SYNOPSIS**  
 > Manages AD group members based on Get-ADUser filter query defined in an extensionAttribute.
 
-Ok let's check it out. First we create a new AD group.
+Ok let's try it out. First we create a new AD group.
 ```powershell
 $Params = @{
     Name          = "role-title-developer"
-    Description   = "Dynamically managed group containing all developers of the org"
+    Description   = "Dynamically managed containing all developers of the org"
     GroupCategory = "Security"
     GroupScope    = "Universal"
     Path          = "OU=groups,DC=contoso,DC=com"
@@ -90,7 +90,12 @@ sam.smith@contoso.com       Expert Software Developer
 tom.tokins@contoso.com      Software Developer
 ```
 
-Et voilà, all users in our AD which have the string `Developer` in their title attribute are now member of the group `role-title-developer` :muscle: We can now assign resources to this group in AD, but also in AAD (given that the group is synced).
+Et voilà, all users in our AD which have the string `Developer` in their title attribute are now member of the group `role-title-developer` :muscle: This enables a few things:
+* We can assign resources to this group in AD by assigning it to other groups
+* We can use them within applications that use AD as user base (e.g. you could assign the group to a Jira project)
+* We can even assign resources in AAD, given that the group is in the sync scope
+
+Fantastic! :blush:
 
 ## Scheduling
 In order to fully replicate the AAD feature we need to set up scheduling. I recommend running the script every 5-10 minutes. For that either utilize the task scheduler which is present on each Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
