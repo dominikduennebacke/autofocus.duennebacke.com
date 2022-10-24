@@ -34,7 +34,7 @@ site-nav .page-link {
   color: $title-color;
   line-height: 1.75;
   background: $highlight-background-color;
-
+  
 }
 
 .post-title {
@@ -52,7 +52,7 @@ site-nav .page-link {
   letter-spacing: 0px;
   font-style: normal;
   border-radius: 10px;
-  color: $text-color;
+  color: $brand-color;
   font-family: $base-font-family;
   &:hover {
     background-color: $brand-color;
