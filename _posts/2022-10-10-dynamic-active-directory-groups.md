@@ -3,7 +3,7 @@ tags: active-directory, azure-ad, groups, dynamic, powershell
 published: true
 ---
 
-One of my favorite features in Azure AD is dynamic groups. You can simply manage users of a group by defining filter rules. Since many organizations still use Active Directory to manage their users and resources wouldn't it be great to have the same functionality there? Say no more :cool:
+One of my favorite features in Azure AD is dynamic groups. You can simply manage users of a group by defining filter rules. Since many organizations still use Active Directory to manage their users and resources wouldn't it be great to have the same functionality there? Say no more :sunglasses:
 
 ## Azure AD
 For quite some time now Azure AD offers [dynamic groups](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/groups-dynamic-membership). This means membership of a user in a group is determined by filter rules based on the user's attributes. Let's look at an example:  
@@ -28,7 +28,7 @@ tom.tokins@contoso.com      Software Developer
 ```
 
 
-Look's about right. You can now go ahead and assign Azure AD resources to those groups, whether that's an app, a license or memberships or ownership for other groups. This comes in very handy if you synchronize your employee data from an HR system. The only thing you need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :smirk:  
+Look's about right. We can now go ahead and assign Azure AD resources to those groups, whether that's an app, a license or memberships or ownership for other groups. This comes in very handy if we synchronize our employee data from an HR system. The only thing you need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :smirk:  
 
 But what if some or even all of your resources are managed in Active Directory? Read on.
 
@@ -39,7 +39,7 @@ The script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke
 > **.SYNOPSIS**  
 > Manages AD group members based on Get-ADUser filter query defined in an extensionAttribute.
 
-Ok let's check it out. First we create an AD group.
+Ok let's check it out. First we create a new AD group.
 ```powershell
 $Params = @{
     Name          = "role-title-developer"
@@ -52,16 +52,18 @@ New-ADGroup @Params
 ```
 Then we set a Get-ADUser filter query on `extensionAttribute10`.
 ```powershell
-Set-ADGroup -Identity "role-title-developer" -Replace @{extensionAttribute10 = "title -like '*Developer*'"}
+Set-ADGroup -Identity "role-title-developer" -Replace @{
+    extensionAttribute10 = "title -like '*Developer*'"
+}
 ```
 
 Now we download the script.
 ```powershell
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/dominikduennebacke/Sync-DynamicAdGroupMember/main/Sync-DynamicAdGroupMember.ps1" -OutFile "Sync-DynamicAdGroupMember.ps1"
 ```
-And run it providing `10` for parameter `ExtensionAttribute`. Make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS) when doing so.
+And run it providing number `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute. When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS).
 > :warning: **Warning**  
-> As with any script from the internet, use them at your own risk and inspect the source code before running them.
+> As with any script from the internet, use it at your own risk and inspect the source code before running it.
 
 ```powershell
 ./Sync-DynamicAdGroupMember.ps1 -ExtensionAttribute 10 -VERBOSE
@@ -89,16 +91,16 @@ sam.smith@contoso.com       Expert Software Developer
 tom.tokins@contoso.com      Software Developer
 ```
 
-Et voilà, all users of the org which have the string "Developer" in their title attribute are now member of `role-title-developer` :muscle:
+Et voilà, all users in our AD which have the string `Developer` in their title attribute are now member of the group `role-title-developer` :muscle: We can now assign resources to this group in AD, but also in AAD (given that the group is synced).
 
 ## Scheduling
-In order to fully replicate the AAD feature we need to set up scheduling. I recommend running the script every 5-10 minutes.Either utilize the task scheduler which is present on each Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
+In order to fully replicate the AAD feature we need to set up scheduling. I recommend running the script every 5-10 minutes. For that either utilize the task scheduler which is present on each Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
-One dynamic AD group is great, but how about ten? No problem, the script theoretically allows an infinite number of pairs. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 30 dynamic groups with a scheduling interval of 5 minutes.
+One dynamic AD group is great, but how about ten? No problem, the script theoretically allows an infinite number of dynamic groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 30 dynamic groups with a scheduling interval of 5 minutes.
 
-## The filter query
-You may have noticed that the queries between the AD and AAD differ even though they refer to the same attribute and comparison method.
+## Filter query
+You may have noticed that the queries between the AD and AAD differ even though they achieve the same thing.
 ```
 # AD
 "title -like '*Developer*'"
@@ -106,7 +108,21 @@ You may have noticed that the queries between the AD and AAD differ even though 
 # AAD
 (user.jobTitle -contains "Developer")
 ```
-That's because AD and AAD are two seperate systems with their own attributes and comparison logic. For example, while AAD does not offer a `like` operator, AD does offer a `contain` operator which however has a completely different meaning. While AD accepts wildcards `*`, AAD does not. And there are many more differences. So make sure to check out the [documentation](https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser?view=windowsserver2022-ps#parameters) on Get-ADUser filter syntax before jumping in.
+That's because AD and AAD are two seperate systems with their own attributes and comparison logic. For example, while AAD does not offer a `like` operator, AD does offer a `contain` operator which however has a completely different meaning. While AD accepts wildcards `*`, AAD does not. And there are many more differences. So make sure to check out the [documentation](https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser?view=windowsserver2022-ps#parameters) on Get-ADUser filter syntax before jumping in. To get your creativity going here are some examples.
+
+```powershell
+# Group: role-department-marketing
+department -eq 'Marketing'
+
+# Group: role-department-marketingandsales
+(department -eq 'Marketing') or (department -eq 'Sales')
+
+# Group: role-type-employee
+(employeeType -eq 'Employee') -and (Enabled -eq $true)
+
+# Group: role-office-nyc
+office -eq "New York
+```
 
 ## Parameters
 Oh, so you're a pro user? Cool, :sunglasses: here are some extra features the script offers.
