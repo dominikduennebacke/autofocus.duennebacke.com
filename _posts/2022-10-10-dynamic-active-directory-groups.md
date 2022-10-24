@@ -3,7 +3,7 @@ tags: active-directory
 published: true
 ---
 
-One of my favorite features in Azure AD is the dynamic group features. You can simply manage users of a group by defining a filter rule. Since many organizations still use Active Directory as their source of truth for users wouldn't it be great to have the same functionality there? I got you covered.
+One of my favorite features in Azure AD is dynamic groups. You can simply manage users of a group by defining a filter rule. Since many organizations still use Active Directory to authenticate applications wouldn't it be great to have the same functionality there? I got you covered.
 
 ## Azure AD
 For quite some time now Azure AD offers [dynamic groups](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/groups-dynamic-membership). This means membership of a user in a group is determined by a defined filter rule based on the users attributes. Let's look at a few example:
