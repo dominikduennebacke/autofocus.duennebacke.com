@@ -5,7 +5,7 @@ tags: active-directory azure-ad dynamic groups powershell
 One of my favorite features in Azure AD is dynamic groups. You can simply manage users of a group by defining filter rules. Since many organizations still use Active Directory to manage their users and resources wouldn't it be great to have the same functionality there? Say no more :sunglasses:
 
 ## Azure AD
-For quite some time now Azure AD offers [dynamic groups](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/groups-dynamic-membership). This means membership of a user in a group is determined by filter rules based on the user's attributes. Let's look at an example:  
+For quite some time now Azure AD offers [dynamic groups](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/groups-dynamic-membership). This means membership of a user in a group is determined by filter rules based on the user's attributes. Let's look at an example of the Azure AD security group `role-title-developer`:  
 
 ![Filter rule of an Azure AD group](/images/aad.png)
 
