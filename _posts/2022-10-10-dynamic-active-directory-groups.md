@@ -3,12 +3,12 @@ tags: active-directory
 published: true
 ---
 
-One of my favorite features in Azure AD is dynamic groups. You can simply manage users of a group by defining a filter rule. Since many organizations still use Active Directory to authenticate applications wouldn't it be great to have the same functionality there? I got you covered.
+One of my favorite features in Azure AD is dynamic groups. You can simply manage users of a group by defining filter rules. Since many organizations still use Active Directory to authenticate applications wouldn't it be great to have the same functionality there? Say no more :cool:.
 
 ## Azure AD
 For quite some time now Azure AD offers [dynamic groups](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/groups-dynamic-membership). This means membership of a user in a group is determined by a defined filter rule based on the users attributes. Let's look at a few example:
-* ![Screenshot of filter rule of Azure AD group 'role-department-marketing'](/assets/images/aad-marketing.png)
-* ![Screenshot of filter rule of Azure AD group 'role-title-developer'](/assets/images/aad-marketing.png)
+* ![Screenshot of filter rule of Azure AD group 'role-department-marketing'](/images/aad-marketing.png)
+* ![Screenshot of filter rule of Azure AD group 'role-title-developer'](/images/aad-marketing.png)
 
 You can now go ahead and add Azure AD resources to those groups, whether that's an app, a license or memberships in other groups. This comes in very handy if you synchronize your employee data from an HR system. The only thing you need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :smirk: But what if you still provide a lot of resources via Active Directory? Read on.
 
