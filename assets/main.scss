@@ -43,6 +43,9 @@ body {
   padding: 5px;
   color: $brand-color;
   font-family: $base-font-family;
+  &:hover {
+    background-color: $brand-color;
+  }
 }
 
 blockquote {
