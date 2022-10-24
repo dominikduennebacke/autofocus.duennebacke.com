@@ -14,7 +14,7 @@ You may have noticed the filter rule.
 (user.jobTitle -contains "Developer")
 ```
 
-This means all users in our AAD which have the word `Developer` in their title, are member of this group. Let's check out our group members.
+This means all users in our AAD which have the word `Developer` in their title, are member of this group. Let's check out the group members.
 ```powershell
 Get-AzureADGroup -Filter "DisplayName eq 'role-title-developer'" | Get-AzureADGroupMember | Select-Object UserPrincipalName,JobTitle
 ```
@@ -27,9 +27,9 @@ tom.tokins@contoso.com      Software Developer
 ```
 
 
-Look's about right. We can now go ahead and assign Azure AD resources to those groups, whether that's an app, a license or memberships or ownership for other groups. This comes in very handy if we synchronize our employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush:  
+Look's about right. We can now go ahead and assign Azure AD resources to those groups, whether that's an app, a license or memberships / ownership for other groups. This comes in very handy if we synchronize our employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush:  
 
-But what if some or even all of your resources are managed in Active Directory? Keep on reading.
+But what if some or even all of our resources are managed in Active Directory? Keep on reading.
 
 ## Active Directory
 
@@ -49,7 +49,7 @@ $Params = @{
 }
 New-ADGroup @Params
 ```
-Then we set a Get-ADUser filter query on `extensionAttribute10`.
+Then we set a Get-ADUser filter query on `extensionAttribute10` of that group.
 ```powershell
 Set-ADGroup -Identity "role-title-developer" -Replace @{
     extensionAttribute10 = "title -like '*Developer*'"
@@ -92,7 +92,7 @@ tom.tokins@contoso.com      Software Developer
 
 Et voilà, all users in our AD which have the string `Developer` in their title attribute are now member of the group `role-title-developer` :muscle: So we have successfully replicated the dynamic group feature from AAD to AD. This enables a few things for us:
 * We can assign resources to this group in AD by assigning it to other groups
-* We can use the group within applications that use AD as user base (e.g. you could assign the group to a role in a Jira project)
+* We can use the group within applications that use AD as user base (e.g. we could assign the group to a role in a Jira project)
 * We can even assign resources in AAD, given that the group is in the Azure AD Connect sync scope
 
 Sounds like the jack of all trades. Fantastic! :blush:
@@ -117,9 +117,6 @@ That's because AD and AAD are two seperate systems with their own attributes and
 ```powershell
 # Group: role-department-marketing
 department -eq 'Marketing'
-
-# Group: role-department-marketingandsales
-(department -eq 'Marketing') or (department -eq 'Sales')
 
 # Group: role-type-employee
 (employeeType -eq 'Employee') -and (Enabled -eq $true)
