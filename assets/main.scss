@@ -15,6 +15,7 @@ $code-color: white !default;
 $base-line-height: 1.75 !default;
 
 @import "minima";
+@import "assets/pygments-solarized-dark.css";
 
 body {
   -webkit-font-smoothing: antialiased;
