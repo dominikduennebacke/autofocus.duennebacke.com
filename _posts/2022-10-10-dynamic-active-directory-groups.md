@@ -90,7 +90,7 @@ sam.smith@contoso.com       Expert Software Developer
 tom.tokins@contoso.com      Software Developer
 ```
 
-Et voilà, all users in our AD which have the string `Developer` in their title attribute are now member of the group `role-title-developer` :muscle: This enables a few things:
+Et voilà, all users in our AD which have the string `Developer` in their title attribute are now member of the group `role-title-developer` :muscle: So we have successfully replicated the dynamic group feature from AAD to AD. This enables a few things for us:
 * We can assign resources to this group in AD by assigning it to other groups
 * We can use them within applications that use AD as user base (e.g. you could assign the group to a Jira project)
 * We can even assign resources in AAD, given that the group is in the sync scope
