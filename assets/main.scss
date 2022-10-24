@@ -7,12 +7,12 @@ $highlight-background-color: #e3e8f4 !default;
 $code-background-color: #081b4b!default;
 
 $base-font-family: 'Source Sans Pro', sans-serif;
-$base-font-size:   18px !default;
+$base-font-size:   16px !default;
 $brand-color: #0169ff !default;
 $text-color: #4d5b7c !default;
 $title-color: #031b4e !default;
 $code-color: white !default;
-$base-line-height: 1.75 !default;
+$base-line-height: 1.5 !default;
 
 @import "minima";
 @import "/assets/pygments-solarized-dark.css";
@@ -74,7 +74,7 @@ blockquote {
 pre, code {
   background: $highlight-background-color;
   border: 0;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .highlighter-rouge .highlight {
@@ -97,7 +97,7 @@ pre.highlight {
     padding-right: 0;
     padding-left: 0;
     background: $code-background-color;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   // copy code to clipboard
