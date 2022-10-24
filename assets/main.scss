@@ -54,6 +54,7 @@ body {
 
 blockquote {
   border-left: 4px solid $code-background-color;
+  color: $text-color;
   font-size: $base-font-size;
   background: $highlight-background-color;
   letter-spacing: 0px;
