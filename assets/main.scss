@@ -22,6 +22,9 @@ body {
 .site-header {
   border-top: 0px;
   padding: 20px;
+}
+
+.site-title, .site-title:visited {
   color: $brand-color;
 }
 
