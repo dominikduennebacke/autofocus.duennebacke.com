@@ -98,13 +98,13 @@ Et voilà, all users in our AD which have the string `Developer` in their title 
 Sounds like the jack of all trades. Fantastic! :blush:
 
 ## Scheduling
-In order to fully replicate the AAD feature we need to set up scheduling. I recommend running the script every 5-10 minutes. For that either utilize the task scheduler which is present on each Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
+In order to fully replicate the AAD feature we need to set up scheduling for the script. I recommend running it every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
-One dynamic AD group is great, but how about ten? No problem, the script theoretically allows an infinite number of dynamic groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 30 dynamic groups with a scheduling interval of 5 minutes.
+One dynamic AD group is great, but how about ten? No problem, the script theoretically allows an infinite number of dynamic groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
 
 ## Filter query
-You may have noticed that the queries between the AD and AAD differ even though they achieve the same thing.
+You may have noticed that the queries between the AD and AAD differ even though they achieve exactly the same thing.
 ```
 # AD
 "title -like '*Developer*'"
