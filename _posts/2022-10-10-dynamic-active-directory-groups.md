@@ -92,10 +92,10 @@ tom.tokins@contoso.com      Software Developer
 
 Et voilà, all users in our AD which have the string `Developer` in their title attribute are now member of the group `role-title-developer` :muscle: So we have successfully replicated the dynamic group feature from AAD to AD. This enables a few things for us:
 * We can assign resources to this group in AD by assigning it to other groups
-* We can use them within applications that use AD as user base (e.g. you could assign the group to a Jira project)
-* We can even assign resources in AAD, given that the group is in the sync scope
+* We can use the group within applications that use AD as user base (e.g. you could assign the group to a role in a Jira project)
+* We can even assign resources in AAD, given that the group is in the Azure AD Connect sync scope
 
-Fantastic! :blush:
+Sounds like the jack of all trades. Fantastic! :blush:
 
 ## Scheduling
 In order to fully replicate the AAD feature we need to set up scheduling. I recommend running the script every 5-10 minutes. For that either utilize the task scheduler which is present on each Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
