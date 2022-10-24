@@ -45,6 +45,10 @@ body {
   }
 }
 
+img {
+  border-radius: 10px;
+}
+
 .tag {
   background: $highlight-background-color;
   letter-spacing: 0px;
