@@ -22,20 +22,16 @@ body {
 .site-header {
   border-top: 0px;
   padding: 20px;
-  color: black;
-}
-
-.site-title, .site-title:visited {
   color: $brand-color;
 }
 
 .post-title {
-  color: black;
+  color: #031b4e;
 }
 
 .post-content {
   h1, h2, h3, h4, h5, h6 {
-    color: #4d5b7c;
+    color: $text-color;
   }
 }
 
