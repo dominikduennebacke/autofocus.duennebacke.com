@@ -2,9 +2,7 @@
 tags: active-directory azure-ad dynamic groups powershell
 ---
 
-One of my favorite features in Azure AD is dynamic groups. We can simply manage users of a group by defining filter rules. We can then go ahead and assign AAD resources to those groups, whether that's an app, a license or memberships / ownership for other groups. This comes in very handy if we synchronize our employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush:  
-
-Since many organizations still use Active Directory to manage their users and resources wouldn't it be great to have the same functionality there? Say no more :sunglasses:
+One of my favorite features in Azure AD is dynamic groups. We can simply manage users of a group by defining filter rules. We can then go ahead and assign Azure AD resources to those groups, whether that apps, licenses or memberships / ownerships for other groups. This comes in very handy if we synchronize employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush: However, many organizations still use Active Directory to manage their users and resources. Wouldn't it be great to have the same functionality there? Say no more :sunglasses:
 
 ## The Scenario
 
@@ -17,8 +15,8 @@ Let's assume we have the following users in our AD which are also synced to Azur
 | tom.tonkins@contoso.com | Marketing  | Head of Marketing |
 
 Now we would like to dynamically add them to the following security groups based on their attributes.
-* `role-department-marketing`: All members of the marketing department
-* `role-title-designer`: All designers of the org
+* `role-department-marketing`: All members of the marketing department.
+* `role-title-designer`: All designers of the org.
 
 Let's see how we can achieve that in Azure AD and AD.
 
@@ -56,7 +54,8 @@ New-MgGroup @Params
 Let's verify the group members.
 
 > :information_source: **INFO**  
-> Keep in mind that processing of the rules can take up to 30 minutes depending on the size of your AAD, as stated in this [Microsoft article](https://learn.microsoft.com/en-gb/azure/active-directory/enterprise-users/groups-troubleshooting).
+> Keep in mind that processing of the rules can take up to 30 minutes depending on the size of your Azure AD, as stated in this [Microsoft article](https://learn.microsoft.com/en-gb/azure/active-directory/enterprise-users/groups-troubleshooting).  
+
 ```powershell
 # role-department-marketing
 Get-AzureADGroup -Filter "DisplayName eq 'role-department-marketing'" `
@@ -139,9 +138,10 @@ $Params = @{
 }
 Invoke-WebRequest @Params
 ```
-And run it, providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS).
+And run it, providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. 
 > :warning: **Warning**  
-> As with any script from the internet, use it at your own risk and inspect the source code before execution.
+> * When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS)
+> * As with any script from the internet, use it at your own risk and inspect the source code before execution
 
 ```powershell
 ./Sync-DynamicAdGroupMember.ps1 -ExtensionAttribute 10 -VERBOSE
@@ -191,7 +191,7 @@ sam.smith@contoso.com       Marketing      Visual Designer
 Et voilà, we have successfully replicated the dynamic group feature from Azure AD to AD. :muscle:
 
 ## Scheduling
-In order to fully replicate the AAD feature we need to set up scheduling for the script. I recommend running it every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
+In order to fully replicate the Azure AD feature we need to set up scheduling for the script. I recommend running it every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
 In our example we have configured two dynamic AD groups. Does that scale? Yes, the script theoretically allows an infinite number of dynamic groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
@@ -265,6 +265,6 @@ role-title-designer   title -like '*Designer*'   tom.tonkins   Add
 We dit it! Dynamic groups in Active Directory. This enables a few things for us:
 * We can assign resources to these groups in AD by assigning it to other groups
 * We can use these groups within applications that use AD as user base (e.g. we could assign a group to a role in a Jira project)
-* We can even assign resources in AAD, given that the groups are in the Azure AD Connect sync scope
+* We can even assign resources in Azure AD, given that the groups are in the Azure AD Connect sync scope
 
 Fantastic! :blush:
