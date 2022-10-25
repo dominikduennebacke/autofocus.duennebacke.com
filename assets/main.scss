@@ -60,6 +60,10 @@ table tr:nth-child(even) {
   background-color: inherit;
 }
 
+table th, table td {
+  padding: 5px 10px;
+}
+
 .tag {
   background: $highlight-background-color;
   letter-spacing: 0px;
