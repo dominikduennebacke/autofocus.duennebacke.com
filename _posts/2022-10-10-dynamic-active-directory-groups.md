@@ -2,67 +2,146 @@
 tags: active-directory azure-ad dynamic groups powershell
 ---
 
-One of my favorite features in Azure AD is dynamic groups. You can simply manage users of a group by defining filter rules. Since many organizations still use Active Directory to manage their users and resources wouldn't it be great to have the same functionality there? Say no more :sunglasses:
+One of my favorite features in Azure AD is dynamic groups. We can simply manage users of a group by defining filter rules. We can then go ahead and assign AAD resources to those groups, whether that's an app, a license or memberships / ownership for other groups. This comes in very handy if we synchronize our employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush:  
+
+Since many organizations still use Active Directory to manage their users and resources wouldn't it be great to have the same functionality there? Say no more :sunglasses:
+
+## The Scenario
+
+Let's assume we have the following users in our AD which are also synced to Azure AD.
+
+| UserPrincipalName       | Department | Title             |
+| ----------------------- | ---------- | ----------------- |
+| john.doe@contoso.com    | Marketing  | UI/UX Designer    |
+| sam.smith@contoso.com   | Marketing  | Visual Designer   |
+| tom.tonkins@contoso.com | Marketing  | Head of Marketing |
+
+Now we would like to dynamically add them to the following security groups based on their attributes.
+* `role-department-marketing`: All members of the marketing department
+* `role-title-designer`: All designers of the org
+
+Let's see how we can achieve that in Azure AD and AD.
 
 ## Azure AD
-For quite some time now Azure AD offers [dynamic groups](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/groups-dynamic-membership). This means membership of a user in a group is determined by filter rules based on the user's attributes. Let's look at an example of the Azure AD security group `role-title-developer`:  
+For quite some time now Azure AD offers [dynamic groups](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/groups-dynamic-membership). This means membership of a user in a group is determined by filter rules based on the user's attributes. So let's create our groups with their rules. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
 
-![Filter rule of an Azure AD group](/images/aad.png)
-
-You may have noticed the filter rule.
-```
-(user.jobTitle -contains "Developer")
-```
-
-This means all users in our AAD which have the word `Developer` in their title, are member of this group. Let's check out the group members.
 ```powershell
-Get-AzureADGroup -Filter "DisplayName eq 'role-title-developer'" | Get-AzureADGroupMember | Select-Object UserPrincipalName,JobTitle
-```
-```
-UserPrincipalName           JobTitle
------------------           --------
-john.doe@contoso.com        Senior Frontend Developer
-sam.smith@contoso.com       Expert Software Developer
-tom.tokins@contoso.com      Software Developer
+# role-department-marketing
+$Params = @{
+    DisplayName                   = "role-department-marketing"
+    MailNickname                  = "role-department-marketing"
+    Description                   = "Dynamically managed, containing all members of the marketing department"
+    MailEnabled                   = $false
+    SecurityEnabled               = $true
+    GroupTypes                    = "DynamicMembership"
+    MembershipRule                = '(user.department -eq "Marketing")'
+    MembershipRuleProcessingState = "On"
+}
+New-MgGroup @Params
+
+# role-title-designer
+$Params = @{
+    DisplayName                   = "role-title-designer"
+    MailNickname                  = "role-title-designer"
+    Description                   = "Dynamically managed, containing all designers of the org"
+    MailEnabled                   = $false
+    SecurityEnabled               = $true
+    GroupTypes                    = "DynamicMembership"
+    MembershipRule                = '(user.jobTitle -contains "Designer")'
+    MembershipRuleProcessingState = "On"
+}
+New-MgGroup @Params
 ```
 
+Let's verify the group members.
 
-Look's about right. We can now go ahead and assign Azure AD resources to those groups, whether that's an app, a license or memberships / ownership for other groups. This comes in very handy if we synchronize our employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush:  
+> :information_source: **INFO**  
+> Keep in mind that processing of the rules can take up to 30 minutes depending on the size of your AAD, as stated in this [Microsoft article](https://learn.microsoft.com/en-gb/azure/active-directory/enterprise-users/groups-troubleshooting).
+```powershell
+# role-department-marketing
+Get-AzureADGroup -Filter "DisplayName eq 'role-department-marketing'" `
+    | Get-AzureADGroupMember `
+    | Select-Object UserPrincipalName, Department, JobTitle
+```
+```
+UserPrincipalName           Department     JobTitle
+-----------------           ----------     --------
+john.doe@contoso.com        Marketing      UI/UX Designer
+sam.smith@contoso.com       Marketing      Visual Designer
+tom.tonkins@contoso.com     Marketing      Head of Marketing
+```
 
-But what if some or even all of our resources are managed in Active Directory? Keep on reading.
+```powershell
+# role-title-designer
+Get-AzureADGroup -Filter "DisplayName eq 'role-title-designer'" `
+    | Get-AzureADGroupMember `
+    | Select-Object UserPrincipalName, Department, JobTitle
+```
+```
+UserPrincipalName           Department     JobTitle
+-----------------           ----------     --------
+john.doe@contoso.com        Marketing      UI/UX Designer
+sam.smith@contoso.com       Marketing      Visual Designer
+```
+Look's about right.
+
 
 ## Active Directory
+Now let's do the same thing in Active Directory. As there is no built-in functionality for this I have built the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
 
-I have built the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember) which basically mimics the functionality of Azure AD dynamic groups in Active Directory.  
+> **.DESCRIPTION**  
+> The Sync-DynamicAdGroupMember.ps1 loops thru all AD groups that have a Get-ADUser filter query defined on a speficied extensionAttribute.
+> The script then fetches all AD users that match the query and syncs them with the group's members.
+> This means missing members are added and obsolete members are removed.
+> Manual changes to the members of the group are overwritten.
 
-> **.SYNOPSIS**  
-> Manages AD group members based on Get-ADUser filter query defined in an extensionAttribute.
-
-Ok let's try it out. First we create a new AD group.
+Ok, let's try it out. First we create our AD groups.
 ```powershell
+# role-department-marketing
 $Params = @{
-    Name          = "role-title-developer"
-    Description   = "Dynamically managed containing all developers of the org"
+    Name          = "role-department-marketing"
+    Description   = "Dynamically managed, containing all members of the marketing department"
+    GroupCategory = "Security"
+    GroupScope    = "Universal"
+    Path          = "OU=groups,DC=contoso,DC=com"
+}
+New-ADGroup @Params
+
+# role-title-designer
+$Params = @{
+    Name          = "role-title-designer"
+    Description   = "Dynamically managed, containing all designers of the org"
     GroupCategory = "Security"
     GroupScope    = "Universal"
     Path          = "OU=groups,DC=contoso,DC=com"
 }
 New-ADGroup @Params
 ```
-Then we set a Get-ADUser filter query on `extensionAttribute10` of that group.
+
+Then we set a Get-ADUser filter query on `extensionAttribute10` of the groups.
 ```powershell
-Set-ADGroup -Identity "role-title-developer" -Replace @{
-    extensionAttribute10 = "title -like '*Developer*'"
+# role-department-marketing
+Set-ADGroup -Identity "ole-department-marketing" -Replace @{
+    extensionAttribute10 = "department -eq 'Marketing'"
+}
+
+# role-title-designer
+Set-ADGroup -Identity "role-title-designer" -Replace @{
+    extensionAttribute10 = "title -like '*Designer*'"
 }
 ```
 
 Now we download the script.
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/dominikduennebacke/Sync-DynamicAdGroupMember/main/Sync-DynamicAdGroupMember.ps1" -OutFile "Sync-DynamicAdGroupMember.ps1"
+$Params = @{
+    Uri     = "https://raw.githubusercontent.com/dominikduennebacke/Sync-DynamicAdGroupMember/main/Sync-DynamicAdGroupMember.ps1"
+    OutFile = "Sync-DynamicAdGroupMember.ps1"
+}
+Invoke-WebRequest @Params
 ```
-And run it providing number `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute. When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS).
+And run it, providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS).
 > :warning: **Warning**  
-> As with any script from the internet, use it at your own risk and inspect the source code before running it.
+> As with any script from the internet, use it at your own risk and inspect the source code before execution.
 
 ```powershell
 ./Sync-DynamicAdGroupMember.ps1 -ExtensionAttribute 10 -VERBOSE
@@ -72,90 +151,75 @@ VERBOSE: Checking dependencies
 VERBOSE: The secure channel between the local computer and the domain is in good condition.
 VERBOSE: Fetching AD groups with a value in extensionAttribute10
 VERBOSE: Syncing group members
-VERBOSE: role-title-developer: department -eq 'Sales'
-VERBOSE: role-title-developer: (+) john.doe
-VERBOSE: role-title-developer: (+) sam.smith
-VERBOSE: role-title-developer: (+) tom.tonkins
+VERBOSE: role-department-marketing: department -eq 'Marketing'
+VERBOSE: role-department-marketing: (+) john.doe
+VERBOSE: role-department-marketing: (+) sam.smith
+VERBOSE: role-department-marketing: (+) tom.tonkins
+VERBOSE: role-title-designer: title -like '*Designer*'
+VERBOSE: role-title-designer: (+) john.doe
+VERBOSE: role-title-designer: (+) sam.smith
+VERBOSE: role-title-designer: (+) tom.tonkins
 ```
 
 Let's verify the group members.
 ```powershell
-Get-ADGroupMember -Identity "role-title-developer" | Get-ADUser -Properties title | Select-Object UserPrincipalName, Title
+# role-department-marketing
+Get-ADGroupMember -Identity "role-department-marketing" `
+    | Get-ADUser -Properties Department,Title `
+    | Select-Object UserPrincipalName, Department, Title
 ```
 ```
-UserPrincipalName           Title
------------------           -----
-john.doe@contoso.com        Senior Frontend Developer
-sam.smith@contoso.com       Expert Software Developer
-tom.tokins@contoso.com      Software Developer
+UserPrincipalName           Department     Title
+-----------------           ----------     -----
+john.doe@contoso.com        Marketing      UI/UX Designer
+sam.smith@contoso.com       Marketing      Visual Designer
+tom.tonkins@contoso.com     Marketing      Head of Marketing
+```
+```powershell
+# role-title-designer
+Get-ADGroupMember -Identity "role-title-designer" `
+    | Get-ADUser -Properties Department,Title `
+    | Select-Object UserPrincipalName, Department, Title
+```
+```
+UserPrincipalName           Department     Title
+-----------------           ----------     -----
+john.doe@contoso.com        Marketing      UI/UX Designer
+sam.smith@contoso.com       Marketing      Visual Designer
 ```
 
-Et voilà, all users in our AD which have the string `Developer` in their title attribute are now member of the group `role-title-developer` :muscle: So we have successfully replicated the dynamic group feature from AAD to AD. This enables a few things for us:
-* We can assign resources to this group in AD by assigning it to other groups
-* We can use the group within applications that use AD as user base (e.g. we could assign the group to a role in a Jira project)
-* We can even assign resources in AAD, given that the group is in the Azure AD Connect sync scope
-
-Sounds like the jack of all trades. Fantastic! :blush:
+Et voilà, we have successfully replicated the dynamic group feature from Azure AD to AD. :muscle:
 
 ## Scheduling
 In order to fully replicate the AAD feature we need to set up scheduling for the script. I recommend running it every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
-One dynamic AD group is great, but how about ten? No problem, the script theoretically allows an infinite number of dynamic groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
+In our example we have configured two dynamic AD groups. Does that scale? Yes, the script theoretically allows an infinite number of dynamic groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
 
 ## Filter query
-You may have noticed that the queries between the AD and AAD differ even though they achieve exactly the same thing.
+You may have noticed that the queries between the AD and Azure AD differ even though they achieve exactly the same thing.
 ```
+# Azure AD
+(user.jobTitle -contains "Designer")
+
 # AD
-"title -like '*Developer*'"
-
-# AAD
-(user.jobTitle -contains "Developer")
+"title -like '*Designer*'"
 ```
-That's because AD and AAD are two seperate systems with their own attributes and comparison logic. For example, while AAD does not offer a `like` operator, AD does offer a `contain` operator which however has a completely different meaning. While AD accepts wildcards `*`, AAD does not. And there are many more differences. So make sure to check out the [documentation](https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser?view=windowsserver2022-ps#parameters) on Get-ADUser filter syntax before jumping in. To get your creativity going here are some examples.
-
-```powershell
-# Group: role-department-marketing
-department -eq 'Marketing'
-
-# Group: role-type-employee
-(employeeType -eq 'Employee') -and (Enabled -eq $true)
-
-# Group: role-office-nyc
-office -eq "New York
-```
+That's because AD and Azure AD are two seperate systems with their own attributes and comparison logic. For example, while Azure AD does not offer a `like` operator, AD does offer a `contain` operator which however has a completely different meaning. While AD accepts wildcard characters such as `*`, Azure AD does not. And there are many more differences. So make sure to check the [documentation](https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser?view=windowsserver2022-ps#parameters) on Get-ADUser filter syntax before jumping in.
 
 ## Parameters
-Oh, so you're a pro user? Cool, :sunglasses: here are some extra features the script offers.
+The script offers some extra features. Let's take a look at the parameters.
 
-### SearchBase
-You can speed up execution by providing an OU for the `SearchBase` parameter. The script will then only consider groups within this OU (recursively).
+### GroupSearchBase
+You can speed up execution by providing an OU for the `GroupSearchBase` parameter. The script will then only consider groups within this OU (recursively).
 ```powershell
-.\Sync-NestedAdGroupMember.ps1 -SearchBase "OU=groups,DC=contoso,DC=com"
+.\Sync-NestedAdGroupMember.ps1 -GroupSearchBase "OU=groups,DC=contoso,DC=com"
 ```
 
-### LegacyPair
-Karl is the application owner of GrayLog and he doesn't like change. Approaching him to set up `app-graylog-access-UNNESTED` instead of `app-graylog-access` will cause lenghty discussions and it will just take forever. Say no more - been there, done that. In that case you can provide additional pairs as hashtable using the parameter `LegacyPair`. Duh Karl! :stuck_out_tongue_winking_eye:
+### UserSearchBase
+You can speed up execution but also limit your Get-ADUser query results by providing an OU for the `UserSearchBase` parameter. The script will then only consider users within this OU (recursively). This is particularly useful if you move users to an archive OU during offboarding (which is outside the OU you provide in the parameter) and want them automatically removed from your dynamic groups.
 ```powershell
-.\Sync-NestedAdGroupMember.ps1 -LegacyPair @{"app-graylog-access-NESTED" = "app-graylog-access"; "app-kibana-access-NESTED" = "app-kibana-access"} -VERBOSE
-```
-```
-VERBOSE: Checking dependencies
-VERBOSE: The secure channel between the local computer and the domain is in good condition.
-VERBOSE: Fetching NESTED AD groups
-VERBOSE: Syncing group members recursively from NESTED group(s) to UNNESTED group(s)
-VERBOSE: app-graylog-access-NESTED > app-graylog-access-UNNESTED
-VERBOSE: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) john.doe
-VERBOSE: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) sam.smith
-VERBOSE: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) tom.tonkins
-VERBOSE: app-graylog-access-NESTED > app-graylog-access
-VERBOSE: app-graylog-access-NESTED > app-graylog-access: (+) john.doe
-VERBOSE: app-graylog-access-NESTED > app-graylog-access: (+) sam.smith
-VERBOSE: app-graylog-access-NESTED > app-graylog-access: (+) tom.tonkins
-VERBOSE: app-kibana-access-NESTED > app-kibana-access
-VERBOSE: app-kibana-access-NESTED > app-kibana-access: (+) john.doe
-VERBOSE: app-kibana-access-NESTED > app-kibana-access: (+) sam.smith
-VERBOSE: app-kibana-access-NESTED > app-kibana-access: (+) tom.tonkins
+.\Sync-NestedAdGroupMember.ps1 -UserSearchBase "OU=users,DC=contoso,DC=com"
 ```
 
 ### WhatIf
@@ -164,9 +228,9 @@ You are hesitant to run the script in your production environment? :weary: Try i
 .\Sync-NestedAdGroupMember.ps1 -WhatIf
 ```
 ```
-What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) john.doe
-What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) sam.smith
-What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) tom.tonkins
+What if: role-title-designer: (+) john.doe
+What if: role-title-designer: (+) sam.smith
+What if: role-title-designer: (+) tom.tonkins
 ```
 
 `WhatIf` can also be combined with `VERBOSE` to receive additional output.
@@ -176,12 +240,12 @@ What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) tom.tonkin
 ```
 VERBOSE: Checking dependencies
 VERBOSE: The secure channel between the local computer and the domain is in good condition.
-VERBOSE: Fetching NESTED AD groups
-VERBOSE: Syncing group members recursively from NESTED group(s) to UNNESTED group(s)
-VERBOSE: app-graylog-access-NESTED > app-graylog-access-UNNESTED
-What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) john.doe
-What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) sam.smith
-What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) tom.tonkins
+VERBOSE: Fetching AD groups with a value in extensionAttribute10
+VERBOSE: Syncing group members
+VERBOSE: role-title-designer: title -like '*Designer*'
+What if: role-title-designer: (+) john.doe
+What if: role-title-designer: (+) sam.smith
+What if: role-title-designer: (+) tom.tonkins
 ```
 
 ### PassThru
@@ -190,21 +254,17 @@ You have set up a scheduled task to run the script and demand output that you wa
 .\Sync-NestedAdGroupMember.ps1 -PassThru | Out-File -FilePath .\Log.txt
 ```
 ```
-NestedGroup               UnnestedGroup               User        Action
------------               -------------               ----        ------
-app-graylog-access-NESTED app-graylog-access-UNNESTED john.doe    Add
-app-graylog-access-NESTED app-graylog-access-UNNESTED sam.smith   Add
-app-graylog-access-NESTED app-graylog-access-UNNESTED tom.tonkins Add
-```
-
-### NestedSuffix / UnnestedSuffix
-You tried, you really tried, but you cannot deal with the pre-defined suffixes `-NESTED` and `-UNNESTED` that determine group pairs? Alright alright, calm down. The script has two parameters hidden from IntelliSense which allow you to override the suffixes. Make sure they are unique, so groups are not accidentally considered as pair by the script.
-```powershell
-.\Sync-NestedAdGroupMember.ps1 -NestedSuffix "-nest" -UnnestedSuffix "-unnest"
+Group                 Query                      User          Action
+-----                 -----                      ----          ------
+role-title-designer   title -like '*Designer*'   john.doe      Add
+role-title-designer   title -like '*Designer*'   sam.smith     Add
+role-title-designer   title -like '*Designer*'   tom.tonkins   Add
 ```
 
 ## Conclusion
-So there you have it, a simple PowerShell script that can save you lots of time and allows you to utilize RBAC or other access management methods based on user groups.
+We dit it! Dynamic groups in Active Directory. This enables a few things for us:
+* We can assign resources to these groups in AD by assigning it to other groups
+* We can use these groups within applications that use AD as user base (e.g. we could assign a group to a role in a Jira project)
+* We can even assign resources in AAD, given that the groups are in the Azure AD Connect sync scope
 
-## Disclaimer
-GrayLog supports nested group membership since 2020 and more and more applications do so too. Additionally many of them offer modern authentication procotols such as OAUTH or SAML that you can utilize with your identity provider (e.g. Azure AD). So keep an eye - you might not even need this script.
+Fantastic! :blush:
