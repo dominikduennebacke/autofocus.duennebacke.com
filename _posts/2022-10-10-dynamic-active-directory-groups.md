@@ -2,7 +2,7 @@
 tags: active-directory azure-ad dynamic groups powershell
 ---
 
-One of my favorite features in Azure AD is dynamic groups. We can simply manage members of a group by defining filter rules. We can then go ahead and assign Azure AD resources to those groups, whether that's apps, licenses or memberships / ownerships for other groups. This comes in very handy if we synchronize employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush: However, many organizations still use Active Directory to manage their users and resources. Wouldn't it be great to have the same functionality there? Say no more :sunglasses:
+One of my favorite features in Azure AD is dynamic groups. We can simply manage members of a group by defining filter rules based on user attributes. We can then go ahead and assign Azure AD resources to those groups, whether that's apps, licenses or memberships / ownerships for other groups. This comes in very handy if we synchronize employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush: However, many organizations still use Active Directory to manage their users and resources. Wouldn't it be great to have the same functionality there? Say no more :sunglasses:
 
 ## The Scenario
 
@@ -84,7 +84,7 @@ Look's about right.
 
 
 ## Active Directory
-Now let's do the same thing in Active Directory. As there is no built-in functionality for this I have created the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
+Now let's do the same thing in AD. As there is no built-in functionality for this I have created the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
 
 > **.DESCRIPTION**  
 > The Sync-DynamicAdGroupMember.ps1 loops thru all AD groups that have a Get-ADUser filter query defined on a speficied extensionAttribute.
@@ -92,7 +92,7 @@ Now let's do the same thing in Active Directory. As there is no built-in functio
 > This means missing members are added and obsolete members are removed.
 > Manual changes to the members of the group are overwritten.
 
-Ok, let's try it out. First we create our AD groups.
+Right on. So, first we create our groups.
 ```powershell
 # role-department-marketing
 $Params = @{
@@ -136,7 +136,7 @@ $Params = @{
 }
 Invoke-WebRequest @Params
 ```
-And run it, providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. 
+And run it, providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. You can interchange that to a different number in case you already use `extensionAttribute10` for something else.
 > :warning: **Warning**  
 > * When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS)
 > * As with any script from the internet, use it at your own risk and inspect the source code before execution
@@ -155,7 +155,6 @@ VERBOSE: role-department-marketing: (+) tom.tonkins
 VERBOSE: role-title-designer: title -like '*Designer*'
 VERBOSE: role-title-designer: (+) john.doe
 VERBOSE: role-title-designer: (+) sam.smith
-VERBOSE: role-title-designer: (+) tom.tonkins
 ```
 
 Let's verify the group members.
@@ -183,10 +182,10 @@ john.doe@contoso.com        Marketing      UI/UX Designer
 sam.smith@contoso.com       Marketing      Visual Designer
 ```
 
-Et voilà, we have successfully replicated the dynamic group feature from Azure AD to AD :muscle:
+Et voilà, we have successfully replicated the dynamic group feature in AD :muscle:
 
 ## Scheduling
-In order to fully replicate the Azure AD feature the script needs to run continuously, ideally every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
+In order to fully replicate the feature the script needs to run continuously, ideally every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
 In our example we have configured two dynamic AD groups. The script theoretically allows an infinite number of those groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
@@ -224,7 +223,6 @@ You are hesitant to run the script in your production environment? :weary: Try i
 
 What if: role-title-designer: (+) john.doe
 What if: role-title-designer: (+) sam.smith
-What if: role-title-designer: (+) tom.tonkins
 ```
 
 `WhatIf` can also be combined with `VERBOSE` to receive additional output.
@@ -238,11 +236,10 @@ VERBOSE: Syncing group members
 VERBOSE: role-title-designer: title -like '*Designer*'
 What if: role-title-designer: (+) john.doe
 What if: role-title-designer: (+) sam.smith
-What if: role-title-designer: (+) tom.tonkins
 ```
 
 ### PassThru
-You have set up a scheduled task to run the script and demand output that you want to pipe to a log file? By adding the `PassThru` switch the script will return pipeable output for all changes that were made. If no changes were made, no output is generated.
+By adding the `PassThru` switch the script will return pipeable output for all changes that were made which you could potentially write to a log file. If no changes were made, no output is generated.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -PassThru | Out-File -FilePath .\Log.txt
 
@@ -250,7 +247,6 @@ Group                 Query                      User          Action
 -----                 -----                      ----          ------
 role-title-designer   title -like '*Designer*'   john.doe      Add
 role-title-designer   title -like '*Designer*'   sam.smith     Add
-role-title-designer   title -like '*Designer*'   tom.tonkins   Add
 ```
 
 ## Conclusion
