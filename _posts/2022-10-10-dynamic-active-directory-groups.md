@@ -136,7 +136,7 @@ $Params = @{
 }
 Invoke-WebRequest @Params
 ```
-And run it - providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. You can interchange that to a different number in case you already use `extensionAttribute10` for something else.
+And run it - providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. You can interchange that to a different number in case you already use `extensionAttribute10` for a different purpose.
 > :warning: **Warning**  
 > * When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS)
 > * As with any script from the internet, use it at your own risk and inspect the source code before execution
