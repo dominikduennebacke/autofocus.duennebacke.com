@@ -2,7 +2,7 @@
 tags: active-directory azure-ad dynamic groups powershell
 ---
 
-One of my favorite features in Azure AD is dynamic groups. We can simply manage users of a group by defining filter rules. We can then go ahead and assign Azure AD resources to those groups, whether that apps, licenses or memberships / ownerships for other groups. This comes in very handy if we synchronize employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush: However, many organizations still use Active Directory to manage their users and resources. Wouldn't it be great to have the same functionality there? Say no more :sunglasses:
+One of my favorite features in Azure AD is dynamic groups. We can simply manage members of a group by defining filter rules. We can then go ahead and assign Azure AD resources to those groups, whether that's apps, licenses or memberships / ownerships for other groups. This comes in very handy if we synchronize employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush: However, many organizations still use Active Directory to manage their users and resources. Wouldn't it be great to have the same functionality there? Say no more :sunglasses:
 
 ## The Scenario
 
@@ -15,13 +15,13 @@ Let's assume we have the following users in our AD which are also synced to Azur
 | tom.tonkins@contoso.com | Marketing  | Head of Marketing |
 
 Now we would like to dynamically add them to the following security groups based on their attributes.
-* `role-department-marketing`: All members of the marketing department.
-* `role-title-designer`: All designers of the org.
+* `role-department-marketing`: All members of the marketing department
+* `role-title-designer`: All designers of the org
 
 Let's see how we can achieve that in Azure AD and AD.
 
 ## Azure AD
-For quite some time now Azure AD offers [dynamic groups](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/groups-dynamic-membership). This means membership of a user in a group is determined by filter rules based on the user's attributes. So let's create our groups with their rules. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
+We create our two security groups with their dynamic filter rules. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
 
 ```powershell
 # role-department-marketing
@@ -61,8 +61,8 @@ Let's verify the group members.
 Get-AzureADGroup -Filter "DisplayName eq 'role-department-marketing'" `
     | Get-AzureADGroupMember `
     | Select-Object UserPrincipalName, Department, JobTitle
-```
-```
+
+
 UserPrincipalName           Department     JobTitle
 -----------------           ----------     --------
 john.doe@contoso.com        Marketing      UI/UX Designer
@@ -75,8 +75,7 @@ tom.tonkins@contoso.com     Marketing      Head of Marketing
 Get-AzureADGroup -Filter "DisplayName eq 'role-title-designer'" `
     | Get-AzureADGroupMember `
     | Select-Object UserPrincipalName, Department, JobTitle
-```
-```
+
 UserPrincipalName           Department     JobTitle
 -----------------           ----------     --------
 john.doe@contoso.com        Marketing      UI/UX Designer
@@ -86,7 +85,7 @@ Look's about right.
 
 
 ## Active Directory
-Now let's do the same thing in Active Directory. As there is no built-in functionality for this I have built the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
+Now let's do the same thing in Active Directory. As there is no built-in functionality for this I have created the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
 
 > **.DESCRIPTION**  
 > The Sync-DynamicAdGroupMember.ps1 loops thru all AD groups that have a Get-ADUser filter query defined on a speficied extensionAttribute.
@@ -145,8 +144,7 @@ And run it, providing integer `10` for parameter `ExtensionAttribute`. This tell
 
 ```powershell
 ./Sync-DynamicAdGroupMember.ps1 -ExtensionAttribute 10 -VERBOSE
-```
-```
+
 VERBOSE: Checking dependencies
 VERBOSE: The secure channel between the local computer and the domain is in good condition.
 VERBOSE: Fetching AD groups with a value in extensionAttribute10
@@ -167,8 +165,7 @@ Let's verify the group members.
 Get-ADGroupMember -Identity "role-department-marketing" `
     | Get-ADUser -Properties Department,Title `
     | Select-Object UserPrincipalName, Department, Title
-```
-```
+
 UserPrincipalName           Department     Title
 -----------------           ----------     -----
 john.doe@contoso.com        Marketing      UI/UX Designer
@@ -180,8 +177,7 @@ tom.tonkins@contoso.com     Marketing      Head of Marketing
 Get-ADGroupMember -Identity "role-title-designer" `
     | Get-ADUser -Properties Department,Title `
     | Select-Object UserPrincipalName, Department, Title
-```
-```
+
 UserPrincipalName           Department     Title
 -----------------           ----------     -----
 john.doe@contoso.com        Marketing      UI/UX Designer
@@ -191,10 +187,10 @@ sam.smith@contoso.com       Marketing      Visual Designer
 Et voilà, we have successfully replicated the dynamic group feature from Azure AD to AD. :muscle:
 
 ## Scheduling
-In order to fully replicate the Azure AD feature we need to set up scheduling for the script. I recommend running it every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
+In order to fully replicate the Azure AD feature the script needs to run continuously, ideally every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
-In our example we have configured two dynamic AD groups. Does that scale? Yes, the script theoretically allows an infinite number of dynamic groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
+In our example we have configured two dynamic AD groups. Does that scale? Yes, the script theoretically allows an infinite number of dynamic AD groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
 
 ## Filter query
 You may have noticed that the queries between the AD and Azure AD differ even though they achieve exactly the same thing.
@@ -226,8 +222,7 @@ You can speed up execution but also limit your Get-ADUser query results by provi
 You are hesitant to run the script in your production environment? :weary: Try it out first with the `WhatIf` switch. The script will not perform any changes but provide output about them.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -WhatIf
-```
-```
+
 What if: role-title-designer: (+) john.doe
 What if: role-title-designer: (+) sam.smith
 What if: role-title-designer: (+) tom.tonkins
@@ -236,8 +231,7 @@ What if: role-title-designer: (+) tom.tonkins
 `WhatIf` can also be combined with `VERBOSE` to receive additional output.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -WhatIf -VERBOSE
-```
-```
+
 VERBOSE: Checking dependencies
 VERBOSE: The secure channel between the local computer and the domain is in good condition.
 VERBOSE: Fetching AD groups with a value in extensionAttribute10
@@ -252,8 +246,7 @@ What if: role-title-designer: (+) tom.tonkins
 You have set up a scheduled task to run the script and demand output that you want to pipe to a log file? By adding the `PassThru` switch the script will return pipeable output for all changes that were made. If no changes were made, no output is generated.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -PassThru | Out-File -FilePath .\Log.txt
-```
-```
+
 Group                 Query                      User          Action
 -----                 -----                      ----          ------
 role-title-designer   title -like '*Designer*'   john.doe      Add
@@ -262,7 +255,7 @@ role-title-designer   title -like '*Designer*'   tom.tonkins   Add
 ```
 
 ## Conclusion
-We dit it! Dynamic groups in Active Directory. This enables a few things for us:
+We dit it! Dynamic groups in Active Directory. This enables a few things:
 * We can assign resources to these groups in AD by assigning it to other groups
 * We can use these groups within applications that use AD as user base (e.g. we could assign a group to a role in a Jira project)
 * We can even assign resources in Azure AD, given that the groups are in the Azure AD Connect sync scope
