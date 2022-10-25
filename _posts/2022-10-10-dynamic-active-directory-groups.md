@@ -21,7 +21,7 @@ Now we would like to dynamically add them to the following security groups based
 Let's see how we can achieve that in Azure AD and AD.
 
 ## Azure AD
-We create our two security groups with their dynamic filter rules. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
+We create our two security groups with dynamic filter rules. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
 
 ```powershell
 # role-department-marketing
@@ -207,19 +207,19 @@ The script offers some extra features. Let's take a look at the parameters.
 ### GroupSearchBase
 You can speed up execution by providing an OU for the `GroupSearchBase` parameter. The script will then only consider groups within this OU (recursively).
 ```powershell
-.\Sync-NestedAdGroupMember.ps1 -GroupSearchBase "OU=groups,DC=contoso,DC=com"
+.\Sync-DynamicAdGroupMember.ps1 -GroupSearchBase "OU=groups,DC=contoso,DC=com"
 ```
 
 ### UserSearchBase
 You can speed up execution but also limit your Get-ADUser query results by providing an OU for the `UserSearchBase` parameter. The script will then only consider users within this OU (recursively). This is particularly useful if you move users to an archive OU during offboarding (which is outside the OU you provide in the parameter) and hence automatically remove them from your dynamic groups.
 ```powershell
-.\Sync-NestedAdGroupMember.ps1 -UserSearchBase "OU=users,DC=contoso,DC=com"
+.\Sync-DynamicAdGroupMember.ps1 -UserSearchBase "OU=users,DC=contoso,DC=com"
 ```
 
 ### WhatIf
 You are hesitant to run the script in your production environment? :weary: Try it out first with the `WhatIf` switch. The script will not perform any changes but provide output about them.
 ```powershell
-.\Sync-NestedAdGroupMember.ps1 -WhatIf
+.\Sync-DynamicAdGroupMember.ps1 -WhatIf
 
 What if: role-title-designer: (+) john.doe
 What if: role-title-designer: (+) sam.smith
@@ -227,7 +227,7 @@ What if: role-title-designer: (+) sam.smith
 
 `WhatIf` can also be combined with `VERBOSE` to receive additional output.
 ```powershell
-.\Sync-NestedAdGroupMember.ps1 -WhatIf -VERBOSE
+.\Sync-DynamicAdGroupMember.ps1 -WhatIf -VERBOSE
 
 VERBOSE: Checking dependencies
 VERBOSE: The secure channel between the local computer and the domain is in good condition.
@@ -241,7 +241,7 @@ What if: role-title-designer: (+) sam.smith
 ### PassThru
 By adding the `PassThru` switch the script will return pipeable output for all changes that were made which you could potentially write to a log file. If no changes were made, no output is generated.
 ```powershell
-.\Sync-NestedAdGroupMember.ps1 -PassThru | Out-File -FilePath .\Log.txt
+.\Sync-DynamicAdGroupMember.ps1 -PassThru | Out-File -FilePath .\Log.txt
 
 Group                 Query                      User          Action
 -----                 -----                      ----          ------
