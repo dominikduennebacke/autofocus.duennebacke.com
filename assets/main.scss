@@ -7,7 +7,7 @@ $highlight-background-color: #e3e8f4 !default;
 $code-background-color: #081b4b!default;
 
 $base-font-family: 'Source Sans Pro', sans-serif;
-$base-font-size:   16px !default;
+$base-font-size:   110px !default;
 $brand-color: #0169ff !default;
 $text-color: #4d5b7c !default;
 $title-color: #031b4e !default;
@@ -53,27 +53,29 @@ img {
 table {
   background-color: inherit;
   color: inherit;
+  border-radius: 10px;
+  border-spacing: 0;
 }
 
 // Rounded corners for tables
 /* top-left border-radius */
 table tr:first-child th:first-child {
-  border-top-left-radius: 6px;
+  border-top-left-radius: 10px;
 }
 
 /* top-right border-radius */
 table tr:first-child th:last-child {
-  border-top-right-radius: 6px;
+  border-top-right-radius: 10px;
 }
 
 /* bottom-left border-radius */
 table tr:last-child td:first-child {
-  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 10px;
 }
 
 /* bottom-right border-radius */
 table tr:last-child td:last-child {
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 10px;
 }
 
 .tag {
