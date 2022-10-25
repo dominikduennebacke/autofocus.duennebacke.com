@@ -62,7 +62,6 @@ Get-AzureADGroup -Filter "DisplayName eq 'role-department-marketing'" `
     | Get-AzureADGroupMember `
     | Select-Object UserPrincipalName, Department, JobTitle
 
-
 UserPrincipalName           Department     JobTitle
 -----------------           ----------     --------
 john.doe@contoso.com        Marketing      UI/UX Designer
@@ -119,7 +118,7 @@ New-ADGroup @Params
 Then we set a Get-ADUser filter query on `extensionAttribute10` of the groups.
 ```powershell
 # role-department-marketing
-Set-ADGroup -Identity "ole-department-marketing" -Replace @{
+Set-ADGroup -Identity "role-department-marketing" -Replace @{
     extensionAttribute10 = "department -eq 'Marketing'"
 }
 
@@ -184,22 +183,22 @@ john.doe@contoso.com        Marketing      UI/UX Designer
 sam.smith@contoso.com       Marketing      Visual Designer
 ```
 
-Et voilà, we have successfully replicated the dynamic group feature from Azure AD to AD. :muscle:
+Et voilà, we have successfully replicated the dynamic group feature from Azure AD to AD :muscle:
 
 ## Scheduling
 In order to fully replicate the Azure AD feature the script needs to run continuously, ideally every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
-In our example we have configured two dynamic AD groups. Does that scale? Yes, the script theoretically allows an infinite number of dynamic AD groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
+In our example we have configured two dynamic AD groups. The script theoretically allows an infinite number of those groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
 
-## Filter query
-You may have noticed that the queries between the AD and Azure AD differ even though they achieve exactly the same thing.
-```
+## Filter Query
+You may have noticed that the queries between AD and Azure AD differ even though they achieve exactly the same thing.
+```powershell
 # Azure AD
-(user.jobTitle -contains "Designer")
+user.jobTitle -contains "Designer"
 
 # AD
-"title -like '*Designer*'"
+title -like '*Designer*'
 ```
 That's because AD and Azure AD are two seperate systems with their own attributes and comparison logic. For example, while Azure AD does not offer a `like` operator, AD does offer a `contain` operator which however has a completely different meaning. While AD accepts wildcard characters such as `*`, Azure AD does not. And there are many more differences. So make sure to check the [documentation](https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser?view=windowsserver2022-ps#parameters) on Get-ADUser filter syntax before jumping in.
 
@@ -213,7 +212,7 @@ You can speed up execution by providing an OU for the `GroupSearchBase` paramete
 ```
 
 ### UserSearchBase
-You can speed up execution but also limit your Get-ADUser query results by providing an OU for the `UserSearchBase` parameter. The script will then only consider users within this OU (recursively). This is particularly useful if you move users to an archive OU during offboarding (which is outside the OU you provide in the parameter) and want them automatically removed from your dynamic groups.
+You can speed up execution but also limit your Get-ADUser query results by providing an OU for the `UserSearchBase` parameter. The script will then only consider users within this OU (recursively). This is particularly useful if you move users to an archive OU during offboarding (which is outside the OU you provide in the parameter) and hence automatically remove them from your dynamic groups.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -UserSearchBase "OU=users,DC=contoso,DC=com"
 ```
