@@ -54,9 +54,7 @@ img {
 table {
   background-color: inherit;
   color: inherit;
-  border-radius: 11px;
-  border-spacing: 0;
-  border-collapse: inherit;
+  border-style: hidden!important;
 }
 
 table tr:nth-child(even) {
