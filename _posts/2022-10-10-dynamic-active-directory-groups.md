@@ -182,10 +182,10 @@ john.doe@contoso.com        Marketing      UI/UX Designer
 sam.smith@contoso.com       Marketing      Visual Designer
 ```
 
-Et voilà, we have successfully replicated the dynamic group feature in AD :muscle:
+Et voilà, we achieved the same result as in Azure AD and hence have successfully replicated the dynamic group feature in AD :muscle:
 
 ## Scheduling
-In order to fully replicate the feature the script needs to run continuously, ideally every 5-10 minutes :calendar: For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
+What's missing? Continuous integration. In order to fully replicate the feature the script needs to run on a regular basis, ideally every 5-10 minutes :calendar: For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
 In our example we have configured two dynamic AD groups. The script theoretically allows an infinite number of those groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
