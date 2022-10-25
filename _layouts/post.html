@@ -27,6 +27,10 @@ layout: default
       </div>
   </header>
 
+  <div class="toc">
+    {% include toc.html html=content %}
+  </div>
+
   <div class="post-content e-content" itemprop="articleBody">
     {{ content }}
     <script src="/assets/js/codeblock.js"></script>
