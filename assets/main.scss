@@ -54,14 +54,31 @@ img {
 table {
   background-color: inherit;
   color: inherit;
+  border-style: hidden!important;
+}
+
+table th, table td {
+  padding: 5px 10px;
 }
 
 table tr:nth-child(even) {
   background-color: inherit;
 }
 
-table th, table td {
-  padding: 5px 10px;
+table tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+
+table tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
 }
 
 .tag {
