@@ -28,7 +28,7 @@ layout: default
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    {{ excerpt }}
+    {{ post.excerpt }}
   </div>
 
   <div class="toc">
@@ -37,7 +37,7 @@ layout: default
   </div>
 
   <div class="post-content e-content" itemprop="articleBody">
-    {{ content | remove: excerpt }}
+    {{ post.content | remove: post.excerpt }}
     <script src="/assets/js/codeblock.js"></script>
   </div>
 
