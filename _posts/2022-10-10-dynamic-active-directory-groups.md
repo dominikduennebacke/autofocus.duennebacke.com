@@ -2,7 +2,7 @@
 tags: active-directory azure-ad dynamic groups powershell
 ---
 
-One of my favorite features in Azure AD is dynamic groups. We can simply manage members of a group by defining filter rules based on user attributes. We can then go ahead and assign Azure AD resources to those groups, whether that's apps, licenses or memberships / ownerships for other groups. This comes in very handy if we synchronize employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush: However, many organizations still use Active Directory to manage their users and resources. Wouldn't it be great to have the same functionality there? Say no more :sunglasses:
+One of my favorite features in Azure AD is dynamic groups. We can simply manage members of a group by defining filter rules based on user attributes. We can then go ahead and assign Azure AD resources to those groups, whether that's apps, licenses or memberships / ownerships for other groups. This comes in very handy if we synchronize employee data from an HR system. The only thing we need to worry about is the sync. Group membership and access to resources is completely automated. Nice! :blush: However, many organizations still use Active Directory to manage their users and resources. Wouldn't it be great to have the same functionality there? Say no more! :sunglasses:
 
 ## The Scenario
 
@@ -21,7 +21,7 @@ Now we would like to dynamically add them to the following security groups based
 Let's see how we can achieve that in Azure AD and AD.
 
 ## Azure AD
-We simply create our two security groups with dynamic filter rules. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
+We simply create the two security groups with dynamic filter rules set in parameter `MembershipRule`. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
 
 ```powershell
 # role-department-marketing
@@ -84,7 +84,7 @@ Look's about right :thumbsup:
 
 
 ## Active Directory
-Now let's do the same thing in AD. As there is no built-in functionality for dynamic groups I have created the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
+Now let's do the same in AD. As there is no built-in functionality for dynamic groups, I have created the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
 
 > **.DESCRIPTION**  
 > The Sync-DynamicAdGroupMember.ps1 loops thru all AD groups that have a Get-ADUser filter query defined on a speficied extensionAttribute.
@@ -185,7 +185,7 @@ sam.smith@contoso.com       Marketing      Visual Designer
 Et voilà, we have successfully replicated the dynamic group feature in AD :muscle:
 
 ## Scheduling
-In order to fully replicate the feature the script needs to run continuously, ideally every 5-10 minutes. For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
+In order to fully replicate the feature the script needs to run continuously, ideally every 5-10 minutes :calendar: For that either utilize the task scheduler which is present on every Windows machine or use the CI/CD environment of your choice, given the runners / workers use Windows. In any case make sure the script is run with a user account that has sufficient permissions to modify group members in your AD, ideally a system user.
 
 ## Scaling
 In our example we have configured two dynamic AD groups. The script theoretically allows an infinite number of those groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
