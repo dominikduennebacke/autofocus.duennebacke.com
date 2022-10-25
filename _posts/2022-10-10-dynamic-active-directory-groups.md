@@ -21,7 +21,7 @@ Now we would like to dynamically add them to the following security groups based
 Let's see how we can achieve that in Azure AD and AD.
 
 ## Azure AD
-We create our two security groups with dynamic filter rules. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
+We simply create our two security groups with dynamic filter rules. I prefer using the `Microsoft.Graph.Groups` PowerShell module. However, you can achieve the same thing with the `AzureAD` module or via the web GUI.
 
 ```powershell
 # role-department-marketing
@@ -53,7 +53,7 @@ New-MgGroup @Params
 
 Let's verify the group members.
 
-> :information_source: **INFO**  
+> :information_source: **Info**  
 > Keep in mind that processing of the rules can take up to 30 minutes depending on the size of your Azure AD, as stated in this [Microsoft article](https://learn.microsoft.com/en-gb/azure/active-directory/enterprise-users/groups-troubleshooting).  
 
 ```powershell
@@ -84,7 +84,7 @@ Look's about right :thumbsup:
 
 
 ## Active Directory
-Now let's do the same thing in AD. As there is no built-in functionality for this I have created the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
+Now let's do the same thing in AD. As there is no built-in functionality for dynamic groups I have created the script [Sync-DynamicAdGroupMember.ps1](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember). Let's see what it does.
 
 > **.DESCRIPTION**  
 > The Sync-DynamicAdGroupMember.ps1 loops thru all AD groups that have a Get-ADUser filter query defined on a speficied extensionAttribute.
@@ -199,7 +199,7 @@ user.jobTitle -contains "Designer"
 # AD
 title -like '*Designer*'
 ```
-That's because AD and Azure AD are two seperate systems with their own attributes and comparison logic. For example, while Azure AD does not offer a `like` operator, AD does offer a `contain` operator which however has a completely different meaning. While AD accepts wildcard characters such as `*`, Azure AD does not. And there are many more differences. So make sure to check the [documentation](https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser?view=windowsserver2022-ps#parameters) on Get-ADUser filter syntax before jumping in.
+That's because AD and Azure AD are two separate systems with their own attributes and comparison logic. For example, while Azure AD does not offer a `like` operator, AD does offer a `contain` operator which however has a completely different meaning. While AD accepts wildcard characters such as `*`, Azure AD does not. And there are many more differences. So make sure to check the [documentation](https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser?view=windowsserver2022-ps#parameters) on Get-ADUser filter syntax before jumping in.
 
 ## Parameters
 The script offers some extra features. Let's take a look at the parameters.
