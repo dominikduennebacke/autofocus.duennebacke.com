@@ -55,6 +55,13 @@ table {
   background-color: inherit;
   color: inherit;
   border-style: hidden!important;
+
+  table {
+    background-color: $highlight-background-color;
+    color: inherit;
+    border-style: hidden !important;
+    border-radius: 12px;
+}
 }
 
 table th, table td {
