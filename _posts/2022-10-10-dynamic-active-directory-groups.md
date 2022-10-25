@@ -202,7 +202,7 @@ title -like '*Designer*'
 That's because AD and Azure AD are two separate systems with their own attributes and comparison logic. For example, while Azure AD does not offer a `like` operator, AD does offer a `contain` operator which however has a completely different meaning. While AD accepts wildcard characters such as `*`, Azure AD does not. And there are many more differences. So make sure to check the [documentation](https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser?view=windowsserver2022-ps#parameters) on Get-ADUser filter syntax before jumping in.
 
 ## Parameters
-The script offers some additional features we can utilize with parameters. Let's take a look.
+The script offers some additional features you can utilize with parameters. Let's take a look.
 
 ### GroupSearchBase
 You can speed up execution by providing an OU for the `GroupSearchBase` parameter. The script will then only consider groups within this OU (recursively).
