@@ -50,6 +50,11 @@ img {
   border-radius: 10px;
 }
 
+table {
+  color: inherit;
+  background-color: inherit;
+}
+
 .tag {
   background: $highlight-background-color;
   letter-spacing: 0px;
