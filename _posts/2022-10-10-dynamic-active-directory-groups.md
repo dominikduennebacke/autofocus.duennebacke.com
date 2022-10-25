@@ -80,7 +80,7 @@ UserPrincipalName           Department     JobTitle
 john.doe@contoso.com        Marketing      UI/UX Designer
 sam.smith@contoso.com       Marketing      Visual Designer
 ```
-Look's about right.
+Look's about right :thumbsup:
 
 
 ## Active Directory
@@ -136,7 +136,7 @@ $Params = @{
 }
 Invoke-WebRequest @Params
 ```
-And run it, providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. You can interchange that to a different number in case you already use `extensionAttribute10` for something else.
+And run it - providing integer `10` for parameter `ExtensionAttribute`. This tells the script that the Get-ADUser filter can be found on this attribute of our AD groups. You can interchange that to a different number in case you already use `extensionAttribute10` for something else.
 > :warning: **Warning**  
 > * When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-DynamicAdGroupMember#REQUIREMENTS)
 > * As with any script from the internet, use it at your own risk and inspect the source code before execution
@@ -161,7 +161,7 @@ Let's verify the group members.
 ```powershell
 # role-department-marketing
 Get-ADGroupMember -Identity "role-department-marketing" `
-    | Get-ADUser -Properties Department,Title `
+    | Get-ADUser -Properties * `
     | Select-Object UserPrincipalName, Department, Title
 
 UserPrincipalName           Department     Title
@@ -173,7 +173,7 @@ tom.tonkins@contoso.com     Marketing      Head of Marketing
 ```powershell
 # role-title-designer
 Get-ADGroupMember -Identity "role-title-designer" `
-    | Get-ADUser -Properties Department,Title `
+    | Get-ADUser -Properties * `
     | Select-Object UserPrincipalName, Department, Title
 
 UserPrincipalName           Department     Title
@@ -191,7 +191,7 @@ In order to fully replicate the feature the script needs to run continuously, id
 In our example we have configured two dynamic AD groups. The script theoretically allows an infinite number of those groups. However, keep an eye on the execution time of the script which should not be larger than the scheduling interval to avoid concurrent runs. Also check the CPU / RAM load on the execution server and your domain controllers. I have run it without issues in environments of ~1000 users and 20 dynamic groups with a scheduling interval of 5 minutes.
 
 ## Filter Query
-You may have noticed that the queries between AD and Azure AD differ even though they achieve exactly the same thing.
+You may have noticed that the queries between AD and Azure AD differ, even though they achieve exactly the same thing.
 ```powershell
 # Azure AD
 user.jobTitle -contains "Designer"
