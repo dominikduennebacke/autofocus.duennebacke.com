@@ -58,6 +58,13 @@ table {
   border-radius: 12px;
 }
 
+@include media-query($on-palm) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
 table th, table td {
   padding: 5px 10px;
 }
