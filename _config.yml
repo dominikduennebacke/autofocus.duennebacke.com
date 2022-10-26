@@ -6,9 +6,6 @@ email: "dominik@duennebacke.com"
 github_username: "dominikduennebacke"
 linkedin_username: "dominikduennebacke"
 
-disqus:
-  shortname: autofocus-duennebacke-com
-
 theme: "minima"
 
 show_excerpts: true
