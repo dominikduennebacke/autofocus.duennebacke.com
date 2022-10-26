@@ -40,7 +40,11 @@ Then we add our role groups as members to `app-graylog-access-NESTED`. The struc
 
 Now we download the script.
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/dominikduennebacke/Sync-NestedAdGroupMember/main/Sync-NestedAdGroupMember.ps1" -OutFile "Sync-NestedAdGroupMember.ps1"
+$Params = @{
+    Uri     = "https://raw.githubusercontent.com/dominikduennebacke/Sync-NestedAdGroupMember/main/Sync-NestedAdGroupMember.ps1"
+    OutFile = "Sync-NestedAdGroupMember.ps1"
+}
+Invoke-WebRequest @Params
 ```
 And run it. Make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember#REQUIREMENTS) when doing so.
 > :warning: **Warning**  
@@ -48,8 +52,7 @@ And run it. Make sure you comply with the [requirements](https://github.com/domi
 
 ```powershell
 ./Sync-NestedAdGroupMember.ps1 -VERBOSE
-```
-```
+
 VERBOSE: Checking dependencies
 VERBOSE: The secure channel between the local computer and the domain is in good condition.
 VERBOSE: Fetching NESTED AD groups
@@ -114,8 +117,7 @@ You can speed up execution by providing an OU for the `SearchBase` parameter. Th
 Karl is the application owner of GrayLog and he doesn't like change. Approaching him to set up `app-graylog-access-UNNESTED` instead of `app-graylog-access` will cause lenghty discussions and it will just take forever. Say no more - been there, done that. In that case you can provide additional pairs as hashtable using the parameter `LegacyPair`. Duh Karl! :stuck_out_tongue_winking_eye:
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -LegacyPair @{"app-graylog-access-NESTED" = "app-graylog-access"; "app-kibana-access-NESTED" = "app-kibana-access"} -VERBOSE
-```
-```
+
 VERBOSE: Checking dependencies
 VERBOSE: The secure channel between the local computer and the domain is in good condition.
 VERBOSE: Fetching NESTED AD groups
@@ -138,8 +140,7 @@ VERBOSE: app-kibana-access-NESTED > app-kibana-access: (+) tom.tonkins
 You are hesitant to run the script in your production environment? :weary: Try it out first with the `WhatIf` switch. The script will not perform any changes but provide output about them.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -WhatIf
-```
-```
+
 What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) john.doe
 What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) sam.smith
 What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) tom.tonkins
@@ -148,8 +149,7 @@ What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) tom.tonkin
 `WhatIf` can also be combined with `VERBOSE` to receive additional output.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -WhatIf -VERBOSE
-```
-```
+
 VERBOSE: Checking dependencies
 VERBOSE: The secure channel between the local computer and the domain is in good condition.
 VERBOSE: Fetching NESTED AD groups
@@ -164,8 +164,7 @@ What if: app-graylog-access-NESTED > app-graylog-access-UNNESTED: (+) tom.tonkin
 You have set up a scheduled task to run the script and demand output that you want to pipe to a log file? By adding the `PassThru` switch the script will return pipeable output for all changes that were made. If no changes were made, no output is generated.
 ```powershell
 .\Sync-NestedAdGroupMember.ps1 -PassThru | Out-File -FilePath .\Log.txt
-```
-```
+
 NestedGroup               UnnestedGroup               User        Action
 -----------               -------------               ----        ------
 app-graylog-access-NESTED app-graylog-access-UNNESTED john.doe    Add
