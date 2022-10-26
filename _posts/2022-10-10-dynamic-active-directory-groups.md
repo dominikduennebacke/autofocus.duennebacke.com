@@ -205,13 +205,13 @@ That's because AD and Azure AD are two separate systems with their own attribute
 The script offers some additional features you can utilize with parameters. Let's take a look.
 
 ### GroupSearchBase
-You can speed up execution by providing an OU for the `GroupSearchBase` parameter. The script will then only consider groups within this OU (recursively).
+We can speed up execution by providing an OU for the `GroupSearchBase` parameter. The script will then only consider groups within this OU (recursively).
 ```powershell
 .\Sync-DynamicAdGroupMember.ps1 -GroupSearchBase "OU=groups,DC=contoso,DC=com"
 ```
 
 ### UserSearchBase
-You can speed up execution but also limit your Get-ADUser query results by providing an OU for the `UserSearchBase` parameter. The script will then only consider users within this OU (recursively). This is particularly useful if you move users to an archive OU during offboarding (which is outside the OU you provide in the parameter) and hence automatically remove them from your dynamic groups.
+We can speed up execution but also limit our Get-ADUser query results by providing an OU for the `UserSearchBase` parameter. The script will then only consider users within this OU (recursively). This is particularly useful if we move users to an archive OU during offboarding (which is outside the OU we provide in the parameter) and hence automatically remove them from our dynamic groups.
 ```powershell
 .\Sync-DynamicAdGroupMember.ps1 -UserSearchBase "OU=users,DC=contoso,DC=com"
 ```
@@ -239,7 +239,7 @@ What if: role-title-designer: (+) sam.smith
 ```
 
 ### PassThru
-By adding the `PassThru` switch the script will return pipeable output for all changes that were made which you could potentially write to a log file. If no changes were made, no output is generated.
+By adding the `PassThru` switch the script will return pipeable output for all changes that were made which we could potentially write to a log file. If no changes were made, no output is generated.
 ```powershell
 .\Sync-DynamicAdGroupMember.ps1 -PassThru | Out-File -FilePath .\Log.txt
 
