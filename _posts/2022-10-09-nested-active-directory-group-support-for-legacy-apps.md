@@ -46,9 +46,10 @@ $Params = @{
 }
 Invoke-WebRequest @Params
 ```
-And run it. Make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember#REQUIREMENTS) when doing so.
+And run it.
 > :warning: **Warning**  
-> As with any script from the internet, use them at your own risk and inspect the source code before running them.
+> * When you run the script make sure you comply with the [requirements](https://github.com/dominikduennebacke/Sync-NestedAdGroupMember#REQUIREMENTS)
+> * As with any script from the internet, use it at your own risk and inspect the source code before execution
 
 ```powershell
 ./Sync-NestedAdGroupMember.ps1 -VERBOSE
