@@ -31,6 +31,7 @@ titles_from_headings:
 header_pages:
   - about.md
   - tags.md
+  - coffee.md
 
 after_footer_scripts:
   - https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js
